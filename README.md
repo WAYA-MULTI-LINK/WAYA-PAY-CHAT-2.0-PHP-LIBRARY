@@ -78,7 +78,7 @@ Redirect back to a callback_url set when initializing the transaction or on your
 Before you give value to the customer, please make a server-side call to our verification endpoint to confirm the status and properties of the transaction.
 
 
-### 2. Verify Transaction
+### 3. Verify Transaction
 After we redirect to your callback url, please verify the transaction before giving value.
 
 ```php
