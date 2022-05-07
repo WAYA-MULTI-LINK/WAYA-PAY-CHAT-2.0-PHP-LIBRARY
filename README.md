@@ -14,7 +14,7 @@ A PHP API wrapper for [Wayapay](https://wayapay.ng/).
 ### Via Composer
 
 ``` bash
-    $ composer require Pils36/wayapay-php
+    $ composer require pils36/wayapay-php
 ```
 
 ### Via download
