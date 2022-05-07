@@ -1,47 +1,14 @@
 {
     "name": "pils36/wayapay-php",
+    "description": "Helps make your Wayapay api calls with a stdClass object.",
     "type": "library",
-    "description": "Helps make your Wayapay API calls giving a stdClass object.",
-    "keywords": [
-        "pils36",
-        "wayapay-php",
-        "wayapay",
-        "plan",
-        "page",
-        "api",
-        "transaction",
-        "customer",
-        "subscription",
-        "enable",
-        "disable",
-        "verify",
-        "curl"
-    ],
-    "homepage": "https://github.com/Pils36/wayapay-php",
     "license": "MIT",
-        "authors": [
-        {
-            "name": "Pils36",
-            "email": "adenugaadebambo41@gmail.com",
-            "homepage": "https://github.com/Pils36",
-            "role": "Owner"
-        },
+    "authors": [
         {
             "name": "Adebambo Adenuga",
-            "email": "adenugaadebambo41@gmail.com",
-            "homepage": "https://github.com/Pils36",
-            "role": "Developer"
+            "email": "adenugaadebambo41@gmail.com"
         }
     ],
-    "require": {
-    },
-    "require-dev": {
-        "phpunit/phpunit": "~5.3",
-        "scrutinizer/ocular": "^1.1",
-        "guzzlehttp/guzzle": "^6.2",
-        "squizlabs/php_codesniffer": "^2.3",
-        "vlucas/phpdotenv": "^2.2"
-    },
     "autoload": {
         "psr-4": {
             "Pils36\\": "src/"
@@ -54,6 +21,14 @@
     },
     "scripts": {
         "test": "phpunit"
+    },
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "~5.3",
+        "scrutinizer/ocular": "^1.1",
+        "guzzlehttp/guzzle": "^6.2",
+        "squizlabs/php_codesniffer": "^2.3",
+        "vlucas/phpdotenv": "^2.2"
     },
     "extra": {
         "branch-alias": {
