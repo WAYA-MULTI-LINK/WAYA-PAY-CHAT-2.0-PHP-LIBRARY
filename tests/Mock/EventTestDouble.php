@@ -20,6 +20,7 @@ class EventTestDouble extends \Pils36\Wayapay\Event
     const DUMMY_SIGNATURE = '0ef509bb72218531a7d0aa58d2b8dcd93f63f7a4d1f8e2e36eadd'
     . '4f0a19455a92f2ca57a57bfe98dc25f91c47b1221343d61fdd5fd2b7c41b8466cbe5ebd4974';
 
+
     public static function dummyCapture()
     {
         $evt = new EventTestDouble();

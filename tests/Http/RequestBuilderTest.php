@@ -11,7 +11,7 @@ class RequestBuilderTest extends \PHPUnit_Framework_TestCase
 {
     public function testMoveArgsToSentargs()
     {
-        $p = new Wayapay('WAYAPUBK_');
+        $p = new Wayapay('WAYASECK_');
         $interface = ['args'=>['id']];
         $payload = ['id'=>1,'reference'=>'something'];
         $sentargs = [];
@@ -24,7 +24,7 @@ class RequestBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testPutArgsIntoEndpoint()
     {
-        $p = new Wayapay('WAYAPUBK_');
+        $p = new Wayapay('WAYASECK_');
         $rb = new RequestBuilder($p, null, [], ['reference'=>'some']);
         $endpoint = 'verify/{reference}';
 
@@ -34,22 +34,29 @@ class RequestBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testBuild()
     {
-        $p = new Wayapay('WAYAPUBK_');
-        $params = ['email'=>'some@ema.il'];
-        $rb = new RequestBuilder($p, Transaction::fetch(), $params);
+        $p = new Wayapay('WAYASECK_');
+        $params = ['amount'=>'120.00', 'description'=>'some description', 'currency'=> 566, 'fee'=>1, 'customer'=>json_encode(['name'=>'Luke Vincent', 'email'=>'wakexow@mailinator.com', 'phoneNumber'=>'+1(194)8667447']), 'merchantId'=>'MER_qZaVZ1645265780823HOaZW', 'wayaPublicKey'=>'WAYAPUBK_TEST_0x3442f06c8fa6454e90c5b1a518758c70'];
+        $rb = new RequestBuilder($p, Transaction::initialize(), $params);
 
         $r = $rb->build();
+
+
+
+
         $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/request/transaction', $r->endpoint);
-        $this->assertEquals('WAYAPUBK_', $r->headers['wayaPublicKey']);
+        $this->assertEquals('WAYASECK_', $r->headers['Authorization']);
         $this->assertEquals('post', $r->method);
         $this->assertEquals(json_encode($params), $r->body);
+
 
         $params = ['perPage'=>10];
         $rb = new RequestBuilder($p, Transaction::getList(), $params);
 
         $r = $rb->build();
-        $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/request?perPage=10', $r->endpoint);
-        $this->assertEquals('WAYAPUBK_', $r->headers['wayaPublicKey']);
+
+
+        $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/request/transaction?perPage=10', $r->endpoint);
+        $this->assertEquals('WAYASECK_', $r->headers['Authorization']);
         $this->assertEquals('get', $r->method);
         $this->assertEmpty($r->body);
 
@@ -57,8 +64,11 @@ class RequestBuilderTest extends \PHPUnit_Framework_TestCase
         $rb = new RequestBuilder($p, Transaction::verify(), [], $args);
 
         $r = $rb->build();
-        $this->assertEquals('https://api.Wayapay.co/transaction/verify/some-reference', $r->endpoint);
-        $this->assertEquals('WAYAPUBK_', $r->headers['wayaPublicKey']);
+
+
+
+        $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/request/transaction/verify/some-reference', $r->endpoint);
+        $this->assertEquals('WAYASECK_', $r->headers['Authorization']);
         $this->assertEquals('get', $r->method);
         $this->assertEmpty($r->body);
     }

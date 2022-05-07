@@ -1,20 +1,25 @@
 {
     "name": "pils36/wayapay-php",
     "type": "library",
-    "description": "Helps make your Wayapay API calls in PHP",
+    "description": "Helps make your Wayapay API calls giving a stdClass object.",
     "keywords": [
         "pils36",
         "wayapay-php",
         "wayapay",
+        "plan",
+        "page",
         "api",
-        "initialize",
         "transaction",
+        "customer",
+        "subscription",
+        "enable",
+        "disable",
         "verify",
         "curl"
     ],
     "homepage": "https://github.com/Pils36/wayapay-php",
     "license": "MIT",
-    "authors": [
+        "authors": [
         {
             "name": "Pils36",
             "email": "adenugaadebambo41@gmail.com",
@@ -37,15 +42,14 @@
         "squizlabs/php_codesniffer": "^2.3",
         "vlucas/phpdotenv": "^2.2"
     },
-
     "autoload": {
         "psr-4": {
             "Pils36\\": "src/"
         }
     },
-     "autoload-dev": {
+    "autoload-dev": {
         "psr-4": {
-            "Pils36\\Express\\Test\\": "tests/"
+            "Pils36\\Wayapay\\Test\\": "tests/"
         }
     },
     "scripts": {

@@ -9,7 +9,7 @@ class CallerTest extends \PHPUnit_Framework_TestCase
 {
     public function testInitialize()
     {
-        $p = new Wayapay('WAYAPUBK_');
+        $p = new Wayapay('WAYASECK_');
         $c = new Caller($p);
         $this->assertNotNull($c);
     }

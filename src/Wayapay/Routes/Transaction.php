@@ -16,23 +16,18 @@ class Transaction implements RouteInterface
     {
         return [
             RouteInterface::METHOD_KEY => RouteInterface::POST_METHOD,
-            RouteInterface::ENDPOINT_KEY => Transaction::root() . '/initialize',
+            RouteInterface::ENDPOINT_KEY => Transaction::root() . '',
             RouteInterface::PARAMS_KEY => [
-                'reference',
-                'callback_url',
                 'amount',
-                'email',
                 'description',
                 'currency',
                 'fee',
+                'customer',
                 'merchantId',
-                'wayaPublicKey'
+                'wayaPublicKey',
             ],
         ];
     }
-
-
-
 
     public static function charge()
     {
@@ -98,9 +93,27 @@ class Transaction implements RouteInterface
         ];
     }
 
+    public static function export()
+    {
+        return [
+            RouteInterface::METHOD_KEY => RouteInterface::GET_METHOD,
+            RouteInterface::ENDPOINT_KEY => Transaction::root() . '/export',
+            RouteInterface::PARAMS_KEY => [
+                'from',
+                'to',
+                'settled',
+                'payment_page',
+            ],
+        ];
+    }
 
-
-
+    public static function totals()
+    {
+        return [
+            RouteInterface::METHOD_KEY => RouteInterface::GET_METHOD,
+            RouteInterface::ENDPOINT_KEY => Transaction::root() . '/totals',
+        ];
+    }
 
     public static function verify()
     {

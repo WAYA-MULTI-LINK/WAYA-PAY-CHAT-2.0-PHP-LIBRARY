@@ -12,13 +12,22 @@ class Router
     private $route_class;
     private $methods;
     public static $ROUTES = [
-        'transaction'
+        'customer', 'page', 'plan', 'subscription', 'transaction', 'subaccount',
+        'balance', 'bank', 'decision', 'integration', 'settlement',
+        'transfer', 'transferrecipient', 'invoice'
     ];
     public static $ROUTE_SINGULAR_LOOKUP = [
-        'transactions'=>'transaction'
+        'customers'=>'customer',
+        'invoices'=>'invoice',
+        'pages'=>'page',
+        'plans'=>'plan',
+        'subscriptions'=>'subscription',
+        'transactions'=>'transaction',
+        'banks'=>'bank',
+        'settlements'=>'settlement',
+        'transfers'=>'transfer',
+        'transferrecipients'=>'transferrecipient',
     ];
-
-
 
     const ID_KEY = 'id';
     const WAYAPAY_API_ROOT = 'https://services.staging.wayapay.ng/payment-gateway/api/v1/request';

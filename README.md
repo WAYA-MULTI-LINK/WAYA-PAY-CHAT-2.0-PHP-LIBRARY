@@ -54,6 +54,7 @@ Initialize a transaction by calling our API.
         'description'=>$description, // string
         'currency'=>$currency, // int
         'fee'=>$fee, // int
+        'customer'=>json_encode(['name' => $name, 'email' => $email, 'phoneNumber' => $phoneNumber]), // json
         'merchantId'=>$merchantId, // string
         'wayaPublicKey'=>$wayaPublicKey // string
       ]);

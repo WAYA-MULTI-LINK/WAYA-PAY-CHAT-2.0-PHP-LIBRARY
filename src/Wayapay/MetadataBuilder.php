@@ -15,7 +15,7 @@ class MetadataBuilder
 
     private function with($name, $value)
     {
-        if ($name === 'customer') {
+        if ($name === 'custom_fields') {
             throw new BadMetaNameException('Please use the withCustomField method to add custom fields');
         }
         $this->meta[$name] = $value;
@@ -46,10 +46,10 @@ class MetadataBuilder
 
     public function withCustomField($title, $value)
     {
-        if (!array_key_exists('customer', $this->meta)) {
-            $this->meta['customer'] = [];
+        if (!array_key_exists('custom_fields', $this->meta)) {
+            $this->meta['custom_fields'] = [];
         }
-        $this->meta['customer'][] = [
+        $this->meta['custom_fields'][] = [
             'display_name' => strval($title),
             'variable_name' => strval($title),
             'value' => strval($value),

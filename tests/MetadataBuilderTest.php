@@ -10,23 +10,23 @@ class MetadataBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $builder = new MetadataBuilder();
         $meta = $builder->withQuoteId(10)->withCustomField('Blah', 'bla')->build();
-        $this->assertEquals('{"quote_id":10,"customer":[{"display_name":'
+        $this->assertEquals('{"quote_id":10,"custom_fields":[{"display_name":'
         .'"Blah","variable_name":"Blah","value":"bla"}]}', $meta);
         $builder = new MetadataBuilder();
         $meta = $builder->withQuoteId(['fail'=>'not'])->withCustomField('Blah', 'bla')->build();
-        $this->assertEquals('{"quote_id":{"fail":"not"},"customer":[{"display_name":'
+        $this->assertEquals('{"quote_id":{"fail":"not"},"custom_fields":[{"display_name":'
         .'"Blah","variable_name":"Blah","value":"bla"}]}', $meta);
         $builder = new MetadataBuilder();
         $meta = $builder->withokay(['fail'=>'not'])->withCustomField('Blah', 'bla')->build();
-        $this->assertEquals('{"okay":{"fail":"not"},"customer":[{"display_name":"Blah"'
+        $this->assertEquals('{"okay":{"fail":"not"},"custom_fields":[{"display_name":"Blah"'
         .',"variable_name":"Blah","value":"bla"}]}', $meta);
         $builder = new MetadataBuilder();
         $meta = $builder->withokay_able(['fail'=>'not'])->withCustomField('Blah', 'bla')->build();
-        $this->assertEquals('{"okay_able":{"fail":"not"},"customer":[{"display_name":"'
+        $this->assertEquals('{"okay_able":{"fail":"not"},"custom_fields":[{"display_name":"'
         .'Blah","variable_name":"Blah","value":"bla"}]}', $meta);
         $builder = new MetadataBuilder();
         $meta = $builder->withOkay(['fail'=>'not'])->withCustomField('Blah', 'bla')->build();
-        $this->assertEquals('{"okay":{"fail":"not"},"customer":[{"display_name":"Blah"'
+        $this->assertEquals('{"okay":{"fail":"not"},"custom_fields":[{"display_name":"Blah"'
         .',"variable_name":"Blah","value":"bla"}]}', $meta);
     }
 
@@ -49,23 +49,23 @@ class MetadataBuilderTest extends \PHPUnit_Framework_TestCase
         MetadataBuilder::$auto_snake_case = false;
         $builder = new MetadataBuilder();
         $meta = $builder->withQuoteId(10)->withCustomField('Blah', 'bla')->build();
-        $this->assertEquals('{"QuoteId":10,"customer":[{"display_name":"Blah","variab'
+        $this->assertEquals('{"QuoteId":10,"custom_fields":[{"display_name":"Blah","variab'
         .'le_name":"Blah","value":"bla"}]}', $meta);
         $builder = new MetadataBuilder();
         $meta = $builder->withQuoteId(['fail'=>'not'])->withCustomField('Blah', 'bla')->build();
-        $this->assertEquals('{"QuoteId":{"fail":"not"},"customer":[{"display_name":"Blah'
+        $this->assertEquals('{"QuoteId":{"fail":"not"},"custom_fields":[{"display_name":"Blah'
         .'","variable_name":"Blah","value":"bla"}]}', $meta);
         $builder = new MetadataBuilder();
         $meta = $builder->withokay(['fail'=>'not'])->withCustomField('Blah', 'bla')->build();
-        $this->assertEquals('{"okay":{"fail":"not"},"customer":[{"display_name":"Blah","v'
+        $this->assertEquals('{"okay":{"fail":"not"},"custom_fields":[{"display_name":"Blah","v'
         .'ariable_name":"Blah","value":"bla"}]}', $meta);
         $builder = new MetadataBuilder();
         $meta = $builder->withokay_able(['fail'=>'not'])->withCustomField('Blah', 'bla')->build();
-        $this->assertEquals('{"okay_able":{"fail":"not"},"customer":[{"display_name":"Blah'
+        $this->assertEquals('{"okay_able":{"fail":"not"},"custom_fields":[{"display_name":"Blah'
         .'","variable_name":"Blah","value":"bla"}]}', $meta);
         $builder = new MetadataBuilder();
         $meta = $builder->withOkay(['fail'=>'not'])->withCustomField('Blah', 'bla')->build();
-        $this->assertEquals('{"Okay":{"fail":"not"},"customer":[{"display_name":"Blah","var'
+        $this->assertEquals('{"Okay":{"fail":"not"},"custom_fields":[{"display_name":"Blah","var'
         .'iable_name":"Blah","value":"bla"}]}', $meta);
     }
 }

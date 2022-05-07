@@ -16,8 +16,8 @@ class Wayapay
 
     public function __construct($secret_key)
     {
-        if (!is_string($secret_key) || !(substr($secret_key, 0, 3)==='sk_')) {
-            throw new \InvalidArgumentException('A Valid Wayapay Secret Key must start with \'sk_\'.');
+        if (!is_string($secret_key) || !(substr($secret_key, 0, 9)==='WAYASECK_')) {
+            throw new \InvalidArgumentException('A Valid Wayapay Secret Key must start with \'WAYASECK_\'.');
         }
         $this->secret_key = $secret_key;
     }
@@ -48,7 +48,7 @@ class Wayapay
                 );
             }
         }
-        
+
         $this->custom_routes = $routes;
     }
 

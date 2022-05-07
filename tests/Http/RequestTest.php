@@ -15,7 +15,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testAllApiRequestsMustHaveJsonHeader()
     {
-        $p = new Wayapay('WAYAPUBK_');
+        $p = new Wayapay('WAYASECK_');
         $r = new Request($p);
         $this->assertEquals('application/json', $r->headers['Content-Type']);
         $rNonApi = new Request();
@@ -32,7 +32,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testFlattenedHeadersAndThatOnlyContentTypeAddedByDefaultWhenWayapayObjectPresent()
     {
-        $p = new Wayapay('WAYAPUBK_');
+        $p = new Wayapay('WAYASECK_');
         $rq = new Request($p);
         $hs = $rq->flattenedHeaders();
         $this->assertEquals(1, count($hs));

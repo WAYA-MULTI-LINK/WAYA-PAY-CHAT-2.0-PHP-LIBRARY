@@ -42,6 +42,8 @@ class Event
 
     public function validFor($key)
     {
+
+
         if ($this->signature === hash_hmac('sha512', $this->raw, $key)) {
             return true;
         }

@@ -12,7 +12,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 {
     public function testInitialize()
     {
-        $p = new Wayapay('WAYAPUBK_');
+        $p = new Wayapay('WAYASECK_');
         $this->expectException(ValidationException::class);
         $r = new Router('nonexistent', $p);
     }
@@ -59,7 +59,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     public function testThatCustomRouteCanBeCalled()
     {
         $custom_route = ['charge' => CustomRoute::class];
-        $p = new Wayapay('WAYAPUBK_');
+        $p = new Wayapay('WAYASECK_');
 
         $p->useRoutes($custom_route);
 
@@ -75,11 +75,14 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     public function testThatOriginalRoutesCanBeCalledWhenCustomRouteIsSet()
     {
         $custom_route = ['charge' => CustomRoute::class];
-        $p = new Wayapay('WAYAPUBK_');
+        $p = new Wayapay('WAYASECK_');
 
         $p->useRoutes($custom_route);
 
+
         $r = $p->balance;
+
+
         $reflection_property = new \ReflectionProperty($r, "methods");
         $reflection_property->setAccessible(true);
         $methods = $reflection_property->getValue($r);
@@ -90,7 +93,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function testThatGetRouteClassMethodReturnsClassNameWhenCustomRouteIsNotSet()
     {
-        $p = new Wayapay('WAYAPUBK_');
+        $p = new Wayapay('WAYASECK_');
 
         $route = $p->balance;
 
@@ -105,7 +108,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     public function testThatGetRouteClassMethodReturnsClassNameWhenCustomRouteIsSet()
     {
         $custom_route = ['charge' => CustomRoute::class];
-        $p = new Wayapay('WAYAPUBK_');
+        $p = new Wayapay('WAYASECK_');
 
         $p->useRoutes($custom_route);
 
