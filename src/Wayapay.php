@@ -14,13 +14,6 @@ class Wayapay
     public static $fallback_to_file_get_contents = true;
     const VERSION="2.1.19";
 
-    // public function __construct($secret_key)
-    // {
-    //     if (!is_string($secret_key) || !(substr($secret_key, 0, 9)==='WAYASECK_')) {
-    //         throw new \InvalidArgumentException('A Valid Wayapay Secret Key must start with \'WAYASECK_\'.');
-    //     }
-    //     $this->secret_key = $secret_key;
-    // }
 
     public function useGuzzle()
     {

@@ -8,11 +8,7 @@ use \Pils36\Wayapay\Exception\ValidationException;
 
 class WayapayTest extends \PHPUnit_Framework_TestCase
 {
-    // public function testInitializeWithInvalidSecretKey()
-    // {
-    //     $this->expectException(\InvalidArgumentException::class);
-    //     $r = new Wayapay('p');
-    // }
+
 
     public function testVersion()
     {

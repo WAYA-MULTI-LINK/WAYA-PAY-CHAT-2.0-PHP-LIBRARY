@@ -54,7 +54,6 @@ class Event
     {
         $pack = new Request();
         $pack->method = $method;
-        // $pack->headers = $additional_headers;
         $pack->headers["X-Wayapay-Signature"] = $this->signature;
         $pack->headers["Content-Type"] = "application/json";
         $pack->body = $this->raw;

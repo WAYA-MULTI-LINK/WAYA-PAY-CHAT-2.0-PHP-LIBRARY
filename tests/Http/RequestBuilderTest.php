@@ -44,7 +44,6 @@ class RequestBuilderTest extends \PHPUnit_Framework_TestCase
 
 
         $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/request/transaction', $r->endpoint);
-        // $this->assertEquals('WAYASECK_', $r->headers['Authorization']);
         $this->assertEquals('post', $r->method);
         $this->assertEquals(json_encode($params), $r->body);
 
@@ -56,7 +55,6 @@ class RequestBuilderTest extends \PHPUnit_Framework_TestCase
 
 
         $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/request/transaction?perPage=10', $r->endpoint);
-        // $this->assertEquals('WAYASECK_', $r->headers['Authorization']);
         $this->assertEquals('get', $r->method);
         $this->assertEmpty($r->body);
 
@@ -68,7 +66,6 @@ class RequestBuilderTest extends \PHPUnit_Framework_TestCase
 
 
         $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/request/transaction/verify/some-reference', $r->endpoint);
-        // $this->assertEquals('WAYASECK_', $r->headers['Authorization']);
         $this->assertEquals('get', $r->method);
         $this->assertEmpty($r->body);
     }
