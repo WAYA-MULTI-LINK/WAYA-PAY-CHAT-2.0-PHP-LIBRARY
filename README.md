@@ -66,8 +66,10 @@ Initialize a transaction by calling our API.
     // perhaps due to network issue
     saveLastTransactionId($tranx->data->tranId);
 
+    $authorization_url = 'https://pay.staging.wayapay.ng?_tranId='.$tranx->data->tranId;
+
     // redirect to page so User can pay
-    header('Location: ' . $tranx->data->authorization_url);
+    header('Location: ' . $authorization_url);
 ```
 
 When the user enters their card details, Wayapay will validate and charge the card. It will do all the below:
