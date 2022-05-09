@@ -44,7 +44,7 @@ Confirm that your server can conclude a TLSv1.2 connection to Wayapay's servers.
 Initialize a transaction by calling our API.
 
 ```php
-    $wayapay = new \Pils36\Wayapay(SECRET_KEY);
+    $wayapay = new \Pils36\Wayapay;
     
     try
     {

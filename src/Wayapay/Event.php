@@ -50,23 +50,23 @@ class Event
         return false;
     }
 
-    public function package(array $additional_headers = [], $method = 'POST')
+    public function package($method = 'POST')
     {
         $pack = new Request();
         $pack->method = $method;
-        $pack->headers = $additional_headers;
+        // $pack->headers = $additional_headers;
         $pack->headers["X-Wayapay-Signature"] = $this->signature;
         $pack->headers["Content-Type"] = "application/json";
         $pack->body = $this->raw;
         return $pack;
     }
 
-    public function forwardTo($url, array $additional_headers = [], $method = 'POST')
+    public function forwardTo($url, $method = 'POST')
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             return false;
         }
-        $packed = $this->package($additional_headers, $method);
+        $packed = $this->package($method);
         $packed->endpoint = $url;
         return $packed->send()->wrapUp();
     }

@@ -30,7 +30,7 @@ class EventTestDouble extends \Pils36\Wayapay\Event
         return $evt;
     }
 
-    public function forwardTo($url, array $additional_headers = [], $method = 'POST')
+    public function forwardTo($url, $method = 'POST')
     {
         $packed = $this->package();
         $packed->endpoint = $url;
