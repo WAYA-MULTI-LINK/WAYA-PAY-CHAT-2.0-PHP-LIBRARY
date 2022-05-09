@@ -53,7 +53,7 @@ Initialize a transaction by calling our API.
         'description'=>$description, // string
         'currency'=>$currency, // int
         'fee'=>$fee, // int
-        'customer'=>json_encode(['name' => $name, 'email' => $email, 'phoneNumber' => $phoneNumber]), // json
+        'customer'=> ['name' => $name, 'email' => $email, 'phoneNumber' => $phoneNumber], // json
         'merchantId'=>$merchantId, // string
         'wayaPublicKey'=>$wayaPublicKey // string
       ]);
@@ -64,7 +64,7 @@ Initialize a transaction by calling our API.
 
     // store transaction reference so we can query in case user never comes back
     // perhaps due to network issue
-    save_last_transaction_reference($tranx->data->tranId);
+    saveLastTransactionId($tranx->data->tranId);
 
     // redirect to page so User can pay
     header('Location: ' . $tranx->data->authorization_url);

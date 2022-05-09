@@ -14,6 +14,10 @@ class Wayapay
     public static $fallback_to_file_get_contents = true;
     const VERSION="2.1.19";
 
+    public function __construct()
+    {
+
+    }
 
     public function useGuzzle()
     {
