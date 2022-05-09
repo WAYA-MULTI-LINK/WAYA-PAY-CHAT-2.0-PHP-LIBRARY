@@ -64,7 +64,7 @@ Initialize a transaction by calling our API.
 
     // store transaction reference so we can query in case user never comes back
     // perhaps due to network issue
-    save_last_transaction_reference($tranx->data->reference);
+    save_last_transaction_reference($tranx->data->tranId);
 
     // redirect to page so User can pay
     header('Location: ' . $tranx->data->authorization_url);
