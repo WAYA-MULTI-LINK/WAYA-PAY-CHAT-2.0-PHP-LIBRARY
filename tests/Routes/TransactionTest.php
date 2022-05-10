@@ -32,7 +32,6 @@ class TransactionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('/charge_token', @$r->chargeToken()[RouteInterface::ENDPOINT_KEY]);
         $this->assertEquals('/totals', $r->totals()[RouteInterface::ENDPOINT_KEY]);
         $this->assertEquals('/export', $r->export()[RouteInterface::ENDPOINT_KEY]);
-        $this->assertEquals('https://pay.staging.wayapay.ng?_tranId=', $r->authorizationUrl()[RouteInterface::ENDPOINT_KEY]);
     }
 
     public function testMethods()
@@ -49,6 +48,5 @@ class TransactionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(RouteInterface::POST_METHOD, $r->checkAuthorization()[RouteInterface::METHOD_KEY]);
         $this->assertEquals(RouteInterface::GET_METHOD, $r->totals()[RouteInterface::METHOD_KEY]);
         $this->assertEquals(RouteInterface::GET_METHOD, $r->export()[RouteInterface::METHOD_KEY]);
-        $this->assertEquals(RouteInterface::GET_METHOD, $r->authorizationUrl()[RouteInterface::METHOD_KEY]);
     }
 }

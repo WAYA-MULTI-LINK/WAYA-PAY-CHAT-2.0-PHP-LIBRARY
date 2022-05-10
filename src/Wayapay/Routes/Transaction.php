@@ -134,11 +134,4 @@ class Transaction implements RouteInterface
         ];
     }
 
-    public static function authorizationUrl()
-    {
-        return [
-            RouteInterface::METHOD_KEY => RouteInterface::GET_METHOD,
-            RouteInterface::ENDPOINT_KEY => 'https://pay.staging.wayapay.ng?_tranId=',
-        ];
-    }
 }
