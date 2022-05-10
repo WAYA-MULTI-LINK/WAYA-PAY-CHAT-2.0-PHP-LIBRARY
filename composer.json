@@ -1,6 +1,6 @@
 {
     "name": "pils36/wayapay-php",
-    "description": "Helps make your Wayapay api calls with a stdClass object.",
+    "description": "Helps make your Wayapay api calls with PHP.",
     "type": "library",
     "license": "MIT",
     "authors": [
