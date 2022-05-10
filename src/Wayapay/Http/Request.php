@@ -57,7 +57,8 @@ class Request
             $this->response->okay = false;
             return;
         }
-        if (class_exists('\\GuzzleHttp\\Exception\\BadResponseException')
+        if (
+            class_exists('\\GuzzleHttp\\Exception\\BadResponseException')
             && class_exists('\\GuzzleHttp\\Exception\\ClientException')
             && class_exists('\\GuzzleHttp\\Exception\\ConnectException')
             && class_exists('\\GuzzleHttp\\Exception\\RequestException')
@@ -81,8 +82,7 @@ class Request
                     || $e instanceof \GuzzleHttp\Exception\ClientException
                     || $e instanceof \GuzzleHttp\Exception\ConnectException
                     || $e instanceof \GuzzleHttp\Exception\RequestException
-                    || $e instanceof \GuzzleHttp\Exception\ServerException)
-                ) {
+                    || $e instanceof \GuzzleHttp\Exception\ServerException)) {
                     if ($e->hasResponse()) {
                         $this->response->body = $e->getResponse()->getBody()->getContents();
                     }
@@ -100,11 +100,11 @@ class Request
         }
         $context = stream_context_create(
             [
-                'http'=>array(
-                  'method'=>$this->method,
-                  'header'=>$this->flattenedHeaders(),
-                  'content'=>$this->body,
-                  'ignore_errors' => true
+                'http' => array(
+                    'method' => $this->method,
+                    'header' => $this->flattenedHeaders(),
+                    'content' => $this->body,
+                    'ignore_errors' => true
                 )
             ]
         );
@@ -119,10 +119,14 @@ class Request
     public function attemptCurl()
     {
 
-        if(json_decode($this->body)->mode == 'test'){
-            $endpoint = $this->endpoint;
-        }else{
-            $endpoint = str_replace('https://services.staging.wayapay.ng/payment-gateway/api/v1', 'https://services.wayapay.ng/payment-gateway/api/v1', $this->endpoint);
+        $endpoint = $this->endpoint;
+
+        if (isset(json_decode($this->body)->mode)) {
+            if (json_decode($this->body)->mode == 'test') {
+                $endpoint = $this->endpoint;
+            } else {
+                $endpoint = str_replace('https://services.staging.wayapay.ng/payment-gateway/api/v1', 'https://services.wayapay.ng/payment-gateway/api/v1', $this->endpoint);
+            }
         }
 
         //open connection
