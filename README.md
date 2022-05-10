@@ -38,7 +38,7 @@ Confirm that your server can conclude a TLSv1.2 connection to Wayapay's servers.
 *Don't disable SSL peer verification!*
 
 ### 1. Prepare your parameters
-`email`, `amount`, `description`, and `merchantId` are the most common compulsory parameters.
+`email`, `amount`, `description`, `wayaPublicKey` and `merchantId` are the most common compulsory parameters.
 
 ### 2. Initialize a transaction
 Initialize a transaction by calling our API.
@@ -102,11 +102,11 @@ After we redirect to your callback url, please verify the transaction before giv
       die($e->getMessage());
     }
 
-    if ('success' === $tranx->data->status) {
+    if ($tranx->status === true) {
       // transaction was successful...
-      // please check other things like whether you already gave value for this ref
+      // please check other things like whether you already gave value for this transactions
       // if the email matches the customer who owns the product etc
-      // Give value
+      // Save your transaction information
     }
 ```
 
