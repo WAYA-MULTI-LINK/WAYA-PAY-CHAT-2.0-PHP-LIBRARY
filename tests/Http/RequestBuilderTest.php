@@ -54,18 +54,17 @@ class RequestBuilderTest extends \PHPUnit_Framework_TestCase
         $r = $rb->build();
 
 
-        $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/request/transaction?perPage=10', $r->endpoint);
+        $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/request?perPage=10', $r->endpoint);
         $this->assertEquals('get', $r->method);
         $this->assertEmpty($r->body);
 
-        $args = ['reference'=>'some-reference'];
+        $args = ['_tranId'=>'12345678'];
         $rb = new RequestBuilder($p, Transaction::verify(), [], $args);
 
         $r = $rb->build();
 
 
-
-        $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/request/transaction/verify/some-reference', $r->endpoint);
+        $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/reference/query/12345678', $r->endpoint);
         $this->assertEquals('get', $r->method);
         $this->assertEmpty($r->body);
     }

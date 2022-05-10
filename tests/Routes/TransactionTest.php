@@ -9,29 +9,29 @@ class TransactionTest extends \PHPUnit_Framework_TestCase
     public function testRoot()
     {
         $r = new Transaction();
-        $this->assertEquals('/transaction', $r->root());
+        $this->assertEquals('', $r->root());
     }
 
     public function testEndpoints()
     {
         $r = new Transaction();
         $this->assertEquals(
-            '/transaction/verify_access_code/{access_code}',
+            '/verify_access_code/{access_code}',
             $r->verifyAccessCode()[RouteInterface::ENDPOINT_KEY]
         );
-        $this->assertEquals('/transaction/verify/{reference}', $r->verify()[RouteInterface::ENDPOINT_KEY]);
-        $this->assertEquals('/transaction', $r->getList()[RouteInterface::ENDPOINT_KEY]);
-        $this->assertEquals('/transaction/{id}', $r->fetch()[RouteInterface::ENDPOINT_KEY]);
-        $this->assertEquals('/transaction', $r->initialize()[RouteInterface::ENDPOINT_KEY]);
-        $this->assertEquals('/transaction/check_authorization', $r->checkAuthorization()[RouteInterface::ENDPOINT_KEY]);
-        $this->assertEquals('/transaction/charge_authorization', $r->charge()[RouteInterface::ENDPOINT_KEY]);
+        $this->assertEquals('/reference/query/{_tranId}', $r->verify()[RouteInterface::ENDPOINT_KEY]);
+        $this->assertEquals('/request', $r->getList()[RouteInterface::ENDPOINT_KEY]);
+        $this->assertEquals('/{id}', $r->fetch()[RouteInterface::ENDPOINT_KEY]);
+        $this->assertEquals('/request/transaction', $r->initialize()[RouteInterface::ENDPOINT_KEY]);
+        $this->assertEquals('/check_authorization', $r->checkAuthorization()[RouteInterface::ENDPOINT_KEY]);
+        $this->assertEquals('/charge_authorization', $r->charge()[RouteInterface::ENDPOINT_KEY]);
         $this->assertEquals(
-            '/transaction/charge_authorization',
+            '/charge_authorization',
             $r->chargeAuthorization()[RouteInterface::ENDPOINT_KEY]
         );
-        $this->assertEquals('/transaction/charge_token', @$r->chargeToken()[RouteInterface::ENDPOINT_KEY]);
-        $this->assertEquals('/transaction/totals', $r->totals()[RouteInterface::ENDPOINT_KEY]);
-        $this->assertEquals('/transaction/export', $r->export()[RouteInterface::ENDPOINT_KEY]);
+        $this->assertEquals('/charge_token', @$r->chargeToken()[RouteInterface::ENDPOINT_KEY]);
+        $this->assertEquals('/totals', $r->totals()[RouteInterface::ENDPOINT_KEY]);
+        $this->assertEquals('/export', $r->export()[RouteInterface::ENDPOINT_KEY]);
     }
 
     public function testMethods()

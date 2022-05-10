@@ -30,7 +30,7 @@ class Router
     ];
 
     const ID_KEY = 'id';
-    const WAYAPAY_API_ROOT = 'https://services.staging.wayapay.ng/payment-gateway/api/v1/request';
+    const WAYAPAY_API_ROOT = 'https://services.staging.wayapay.ng/payment-gateway/api/v1';
 
     public function __call($methd, $sentargs)
     {

@@ -84,18 +84,18 @@ Before you give value to the customer, please make a server-side call to our ver
 After we redirect to your callback url, please verify the transaction before giving value.
 
 ```php
-    $reference = isset($_GET['reference']) ? $_GET['reference'] : '';
-    if(!$reference){
-      die('No reference supplied');
+    $transactionId = isset($_GET['_tranId']) ? $_GET['_tranId'] : '';
+    if(!$transactionId){
+      die('No transaction id provided');
     }
 
     // initiate the Library's Wayapay Object
-    $wayapay = new Pils36\Wayapay(SECRET_KEY);
+    $wayapay = new Pils36\Wayapay;
     try
     {
       // verify using the library
       $tranx = $wayapay->transaction->verify([
-        'reference'=>$reference, // unique to transactions
+        '_tranId'=>$transactionId, // unique to transactions
       ]);
     } catch(\Pils36\Wayapay\Exception\ApiException $e){
       print_r($e->getResponseObject());

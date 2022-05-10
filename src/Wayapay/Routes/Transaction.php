@@ -9,14 +9,14 @@ class Transaction implements RouteInterface
 
     public static function root()
     {
-        return '/transaction';
+        return '';
     }
 
     public static function initialize()
     {
         return [
             RouteInterface::METHOD_KEY => RouteInterface::POST_METHOD,
-            RouteInterface::ENDPOINT_KEY => Transaction::root() . '',
+            RouteInterface::ENDPOINT_KEY => Transaction::root() . '/request/transaction',
             RouteInterface::PARAMS_KEY => [
                 'amount',
                 'description',
@@ -89,7 +89,7 @@ class Transaction implements RouteInterface
     {
         return [
             RouteInterface::METHOD_KEY => RouteInterface::GET_METHOD,
-            RouteInterface::ENDPOINT_KEY => Transaction::root(),
+            RouteInterface::ENDPOINT_KEY => Transaction::root().'/request',
         ];
     }
 
@@ -119,8 +119,8 @@ class Transaction implements RouteInterface
     {
         return [
             RouteInterface::METHOD_KEY => RouteInterface::GET_METHOD,
-            RouteInterface::ENDPOINT_KEY => Transaction::root() . '/verify/{reference}',
-            RouteInterface::ARGS_KEY => ['reference'],
+            RouteInterface::ENDPOINT_KEY => Transaction::root() . '/reference/query/{_tranId}',
+            RouteInterface::ARGS_KEY => ['_tranId'],
         ];
     }
 
