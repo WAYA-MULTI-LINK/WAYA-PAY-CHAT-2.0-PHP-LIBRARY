@@ -73,7 +73,7 @@ Initialize a transaction by calling our API.
 
     // Use the authorization url to
 
-    $authorization_url = $wayapay->transaction->authorizationUrl().$tranx->data->tranId;
+    $authorization_url = 'https://pay.staging.wayapay.ng?_tranId='.$tranx->data->tranId;
 
 ```
 
