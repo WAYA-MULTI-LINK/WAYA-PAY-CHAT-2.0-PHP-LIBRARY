@@ -118,9 +118,16 @@ class Request
 
     public function attemptCurl()
     {
+
+        if(json_decode($this->body)->mode == 'test'){
+            $endpoint = $this->endpoint;
+        }else{
+            $endpoint = str_replace('https://services.staging.wayapay.ng/payment-gateway/api/v1', 'https://services.wayapay.ng/payment-gateway/api/v1', $this->endpoint);
+        }
+
         //open connection
         $ch = \curl_init();
-        \curl_setopt($ch, \CURLOPT_URL, $this->endpoint);
+        \curl_setopt($ch, \CURLOPT_URL, $endpoint);
         ($this->method === RouteInterface::POST_METHOD) && \curl_setopt($ch, \CURLOPT_POST, true);
         ($this->method === RouteInterface::PUT_METHOD) && \curl_setopt($ch, \CURLOPT_CUSTOMREQUEST, 'PUT');
 

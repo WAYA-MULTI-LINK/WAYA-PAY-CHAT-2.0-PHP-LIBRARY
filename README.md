@@ -46,24 +46,21 @@ Initialize a transaction by calling our API.
 ```php
 
     require_once('./vendor/autoload.php');
-    
+
     $wayapay = new \Pils36\Wayapay;
     
     try
     {
 
-        // 'mode' => 'test' for development
-        // 'mode' => 'live' for production
-
       $tranx = $wayapay->transaction->initialize([
-        'amount'=>$amount,     // string   
-        'description'=>$description, // string
-        'currency'=>$currency, // int
-        'fee'=>$fee, // int
-        'customer'=> ['name' => $name, 'email' => $email, 'phoneNumber' => $phoneNumber], // json
-        'merchantId'=>$merchantId, // string
-        'wayaPublicKey'=>$wayaPublicKey, // string
-        'mode'=>$mode // string: 
+        'amount'=>"128.00",     // string   
+        'description'=>"Order for something", // string
+        'currency'=>566, // int
+        'fee'=>1, // int
+        'customer'=> ['name' => "Like Vincent", 'email' => "wakexow@mailinator.com", 'phoneNumber' => "+11948667447"], // array
+        'merchantId'=>"MER_qZaVZ1645265780823HOaZW", // string
+        'wayaPublicKey'=>"WAYAPUBK_TEST_0x3442f06c8fa6454e90c5b1a518758c70", // string
+        'mode'=>"test" // string: \\test or live
       ]);
     } catch(\Pils36\Wayapay\Exception\ApiException $e){
       print_r($e->getResponseObject());
