@@ -26,7 +26,6 @@ class RequestBuilder
 
     public function build()
     {
-
         $this->request->headers["User-Agent"] = "Wayapay/v1 PhpBindings/" . Wayapay::VERSION;
         $this->request->endpoint = Router::WAYAPAY_API_ROOT . $this->interface[RouteInterface::ENDPOINT_KEY];
         $this->request->method = $this->interface[RouteInterface::METHOD_KEY];

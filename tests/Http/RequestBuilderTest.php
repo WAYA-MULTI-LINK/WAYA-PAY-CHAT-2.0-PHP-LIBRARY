@@ -35,12 +35,10 @@ class RequestBuilderTest extends \PHPUnit_Framework_TestCase
     public function testBuild()
     {
         $p = new Wayapay('WAYASECK_');
-        $params = ['amount'=>'120.00', 'description'=>'some description', 'currency'=> 566, 'fee'=>1, 'customer'=>json_encode(['name'=>'Luke Vincent', 'email'=>'wakexow@mailinator.com', 'phoneNumber'=>'+1(194)8667447']), 'merchantId'=>'MER_qZaVZ1645265780823HOaZW', 'wayaPublicKey'=>'WAYAPUBK_TEST_0x3442f06c8fa6454e90c5b1a518758c70'];
+        $params = ['amount'=>'120.00', 'description'=>'some description', 'currency'=> 566, 'fee'=>1, 'customer'=>['name'=>'Luke Vincent', 'email'=>'wakexow@mailinator.com', 'phoneNumber'=>'+11948667447'], 'merchantId'=>'MER_qZaVZ1645265780823HOaZW', 'wayaPublicKey'=>'WAYAPUBK_TEST_0x3442f06c8fa6454e90c5b1a518758c70', 'mode' => 'test'];
         $rb = new RequestBuilder($p, Transaction::initialize(), $params);
 
         $r = $rb->build();
-
-
 
 
         $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/request/transaction', $r->endpoint);

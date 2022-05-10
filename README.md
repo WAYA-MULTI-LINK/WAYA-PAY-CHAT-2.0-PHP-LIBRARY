@@ -48,6 +48,10 @@ Initialize a transaction by calling our API.
     
     try
     {
+
+        // 'mode' => 'test' for development
+        // 'mode' => 'live' for production
+
       $tranx = $wayapay->transaction->initialize([
         'amount'=>$amount,     // string   
         'description'=>$description, // string
@@ -55,7 +59,8 @@ Initialize a transaction by calling our API.
         'fee'=>$fee, // int
         'customer'=> ['name' => $name, 'email' => $email, 'phoneNumber' => $phoneNumber], // json
         'merchantId'=>$merchantId, // string
-        'wayaPublicKey'=>$wayaPublicKey // string
+        'wayaPublicKey'=>$wayaPublicKey, // string
+        'mode'=>$mode // string: 
       ]);
     } catch(\Pils36\Wayapay\Exception\ApiException $e){
       print_r($e->getResponseObject());
@@ -66,10 +71,10 @@ Initialize a transaction by calling our API.
     // perhaps due to network issue
     saveLastTransactionId($tranx->data->tranId);
 
-    $authorization_url = 'https://pay.staging.wayapay.ng?_tranId='.$tranx->data->tranId;
+    // Use the authorization url to
 
-    // redirect to page so User can pay
-    header('Location: ' . $authorization_url);
+    $authorization_url = $wayapay->transaction->authorizationUrl().$tranx->data->tranId;
+
 ```
 
 When the user enters their card details, Wayapay will validate and charge the card. It will do all the below:

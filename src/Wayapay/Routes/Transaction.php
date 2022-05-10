@@ -25,6 +25,7 @@ class Transaction implements RouteInterface
                 'customer',
                 'merchantId',
                 'wayaPublicKey',
+                'mode',
             ],
         ];
     }
@@ -130,6 +131,14 @@ class Transaction implements RouteInterface
             RouteInterface::METHOD_KEY => RouteInterface::GET_METHOD,
             RouteInterface::ENDPOINT_KEY => Transaction::root() . '/verify_access_code/{access_code}',
             RouteInterface::ARGS_KEY => ['access_code'],
+        ];
+    }
+
+    public static function authorizationUrl()
+    {
+        return [
+            RouteInterface::METHOD_KEY => RouteInterface::GET_METHOD,
+            RouteInterface::ENDPOINT_KEY => 'https://pay.staging.wayapay.ng?_tranId=',
         ];
     }
 }

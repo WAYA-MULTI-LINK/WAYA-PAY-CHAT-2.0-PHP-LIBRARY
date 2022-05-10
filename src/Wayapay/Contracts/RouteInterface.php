@@ -12,6 +12,7 @@ interface RouteInterface
     const POST_METHOD = 'post';
     const PUT_METHOD = 'put';
     const GET_METHOD = 'get';
+    const REQUEST_MODE = 'live';
 
     public static function root();
 }
