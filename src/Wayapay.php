@@ -102,4 +102,10 @@ class Wayapay
     {
         return new Router($name, $this);
     }
+
+    public function authorizationUrl($mode = 'live'){
+        $uri = $mode == 'live' ? 'https://pay.wayapay.ng?_tranId=' : 'https://pay.staging.wayapay.ng?_tranId=';
+
+        return $uri;
+    }
 }

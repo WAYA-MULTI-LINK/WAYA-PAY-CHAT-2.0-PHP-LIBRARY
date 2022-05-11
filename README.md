@@ -71,9 +71,12 @@ Initialize a transaction by calling our API.
     // perhaps due to network issue
     saveLastTransactionId($tranx->data->tranId);
 
-    // Use the authorization url to
 
-    $authorization_url = 'https://pay.staging.wayapay.ng?_tranId='.$tranx->data->tranId;
+    // Get Authorization URL to make payment to the Wayapay payment gateway environment
+    $uri = $wayapay->authorizationUrl('test');  // change to live for production
+
+    // Use the authorization url to
+    $authorization_url = $uri.$tranx->data->tranId;
 
 ```
 
