@@ -128,6 +128,9 @@ class Request
                 $endpoint = str_replace('https://services.staging.wayapay.ng/payment-gateway/api/v1', 'https://services.wayapay.ng/payment-gateway/api/v1', $this->endpoint);
             }
         }
+        elseif(explode("?mode=", $endpoint)[1] == 'live'){
+            $endpoint = str_replace('https://services.staging.wayapay.ng/payment-gateway/api/v1', 'https://services.wayapay.ng/payment-gateway/api/v1', $this->endpoint);
+        }
 
         //open connection
         $ch = \curl_init();

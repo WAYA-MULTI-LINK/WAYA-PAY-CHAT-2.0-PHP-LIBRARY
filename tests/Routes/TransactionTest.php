@@ -19,7 +19,7 @@ class TransactionTest extends \PHPUnit_Framework_TestCase
             '/verify_access_code/{access_code}',
             $r->verifyAccessCode()[RouteInterface::ENDPOINT_KEY]
         );
-        $this->assertEquals('/reference/query/{_tranId}', $r->verify()[RouteInterface::ENDPOINT_KEY]);
+        $this->assertEquals('/reference/query/{_tranId}?mode={mode}', $r->verify()[RouteInterface::ENDPOINT_KEY]);
         $this->assertEquals('/request', $r->getList()[RouteInterface::ENDPOINT_KEY]);
         $this->assertEquals('/{id}', $r->fetch()[RouteInterface::ENDPOINT_KEY]);
         $this->assertEquals('/request/transaction', $r->initialize()[RouteInterface::ENDPOINT_KEY]);

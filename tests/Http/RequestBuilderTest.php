@@ -56,13 +56,13 @@ class RequestBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('get', $r->method);
         $this->assertEmpty($r->body);
 
-        $args = ['_tranId'=>'12345678'];
+        $args = ['_tranId'=>'12345678', 'mode' => 'test'];
         $rb = new RequestBuilder($p, Transaction::verify(), [], $args);
 
         $r = $rb->build();
 
 
-        $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/reference/query/12345678', $r->endpoint);
+        $this->assertEquals('https://services.staging.wayapay.ng/payment-gateway/api/v1/reference/query/12345678?mode=test', $r->endpoint);
         $this->assertEquals('get', $r->method);
         $this->assertEmpty($r->body);
     }

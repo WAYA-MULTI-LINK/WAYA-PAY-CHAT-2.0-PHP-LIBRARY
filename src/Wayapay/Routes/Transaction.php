@@ -120,8 +120,8 @@ class Transaction implements RouteInterface
     {
         return [
             RouteInterface::METHOD_KEY => RouteInterface::GET_METHOD,
-            RouteInterface::ENDPOINT_KEY => Transaction::root() . '/reference/query/{_tranId}',
-            RouteInterface::ARGS_KEY => ['_tranId'],
+            RouteInterface::ENDPOINT_KEY => Transaction::root() . '/reference/query/{_tranId}?mode={mode}',
+            RouteInterface::ARGS_KEY => ['_tranId', 'mode'],
         ];
     }
 

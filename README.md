@@ -104,6 +104,7 @@ After we redirect to your callback url, please verify the transaction before giv
       // verify using the library
       $tranx = $wayapay->transaction->verify([
         '_tranId'=>$transactionId, // unique to transactions
+        'mode'=>'test', // test or live
       ]);
     } catch(\Pils36\Wayapay\Exception\ApiException $e){
       print_r($e->getResponseObject());
@@ -117,27 +118,6 @@ After we redirect to your callback url, please verify the transaction before giv
       // Save your transaction information
     }
 ```
-
-### MetadataBuilder
-
-This class helps you build valid json metadata strings to be sent when making transaction requests.
-```php
-    $builder = new MetadataBuilder();
-```
-
-
-#### Add Custom Fields
-
-Add Custom Fields by calling the `withCustomField` function (These will shown on dashboard).
-
-```php
-    $builder->withCustomField('Mobile Number', '08123456789');
-    $builder->withCustomField('Description', 'Chief, we move!');
-```
-
-#### Build JSON
-
-Finally call `build()` to get your JSON metadata string.
 
 
 ## Change log
