@@ -1,111 +1,208 @@
 <?php
 
-namespace Pils36;
+namespace WayaPay;
 
-use \Pils36\Wayapay\Helpers\Router;
-use \Pils36\Wayapay\Contracts\RouteInterface;
-use \Pils36\Wayapay\Exception\ValidationException;
+use Exception;
 
-class Wayapay
+class WayaPayRestClient
 {
-    public $secret_key;
-    public $use_guzzle = false;
-    public $custom_routes = [];
-    public static $fallback_to_file_get_contents = true;
-    const VERSION="2.1.19";
+    private string $merchantId;
+    private string $publicKey;
+    private string $baseUrl;
+    private string $defaultPaymentLink;
 
-    public function __construct()
+    private const API_BASE = [
+        'test' => 'https://services.staging.wayapay.ng',
+        'prod' => 'https://services.wayapay.ng',
+    ];
+
+    private const PAYMENT_LINK = [
+        'test' => 'https://pay.staging.wayapay.ng/?_tranId=',
+        'prod' => 'https://pay.wayapay.ng/?_tranId=',
+    ];
+
+    public function __construct(string $merchantId, string $publicKey, string $environment)
     {
+        if (empty($merchantId) || empty($publicKey) || empty($environment)) {
+            throw new Exception('merchantId, publicKey, and environment are required');
+        }
 
+        $isProd = in_array(strtolower(trim($environment)), ['production', 'prod']);
+
+        $this->merchantId = $merchantId;
+        $this->publicKey = $publicKey;
+        $this->baseUrl = $isProd ? self::API_BASE['prod'] : self::API_BASE['test'];
+        $this->defaultPaymentLink = $isProd ? self::PAYMENT_LINK['prod'] : self::PAYMENT_LINK['test'];
     }
 
-    public function useGuzzle()
+    public function initializePayment(array $payload): array
     {
-        $this->use_guzzle = true;
-    }
+        $required = [
+            'currency',
+            'amount',
+            'callBackUrl',
+            'idempotencyKey',
+            'paymentRef',
+            'metadata'
+        ];
 
-    public function useRoutes(array $routes)
-    {
-        foreach ($routes as $route => $class) {
-            if (! is_string($route)) {
-                throw new \InvalidArgumentException(
-                    'Custom routes should map to a route class'
-                );
-            }
-
-            if (in_array($route, Router::$ROUTES)) {
-                throw new \InvalidArgumentException(
-                    $route . ' is already an existing defined route'
-                );
-            }
-
-            if (! in_array(RouteInterface::class, class_implements($class))) {
-                throw new \InvalidArgumentException(
-                    'Custom route class ' . $class . 'should implement ' . RouteInterface::class
-                );
+        foreach ($required as $field) {
+            if (empty($payload[$field])) {
+                return ['status' => false, 'message' => "{$field} is required"];
             }
         }
 
-        $this->custom_routes = $routes;
-    }
+        $metadataRequired = [
+            'firstName',
+            'lastName',
+            'phoneNumber',
+            'emailAddress'
+        ];
 
-    public static function disableFileGetContentsFallback()
-    {
-        Wayapay::$fallback_to_file_get_contents = false;
-    }
-
-    public static function enableFileGetContentsFallback()
-    {
-        Wayapay::$fallback_to_file_get_contents = true;
-    }
-
-    public function __call($method, $args)
-    {
-        if ($singular_form = Router::singularFor($method)) {
-            return $this->handlePlural($singular_form, $method, $args);
+        foreach ($metadataRequired as $field) {
+            if (empty($payload['metadata'][$field])) {
+                return ['status' => false, 'message' => "metadata.{$field} is required"];
+            }
         }
-        return $this->handleSingular($method, $args);
-    }
 
-    private function handlePlural($singular_form, $method, $args)
-    {
-        if ((count($args) === 1 && is_array($args[0]))||(count($args) === 0)) {
-            return $this->{$singular_form}->__call('getList', $args);
-        }
-        throw new \InvalidArgumentException(
-            'Route "' . $method . '" can only accept an optional array of filters and '
-            .'paging arguments (perPage, page).'
+        $response = $this->request(
+            'POST',
+            '/payment-collect/initiate',
+            $payload
         );
+
+        return [
+            'status' => true,
+            'data' => $response['data'] ?? $response
+        ];
     }
 
-    private function handleSingular($method, $args)
+    public function initiatePayout(array $payload): array
     {
-        if (count($args) === 1) {
-            $args = [[], [ Router::ID_KEY => $args[0] ] ];
-            return $this->{$method}->__call('fetch', $args);
+        $required = [
+            'currency',
+            'amount',
+            'idempotencyKey',
+            'bankCode',
+            'accountNumber'
+        ];
+
+        foreach ($required as $field) {
+            if (empty($payload[$field])) {
+                return ['status' => false, 'message' => "{$field} is required"];
+            }
         }
-        throw new \InvalidArgumentException(
-            'Route "' . $method . '" can only accept an id or code.'
+
+        $response = $this->request(
+            'POST',
+            '/payment-payout/initiate',
+            $payload
         );
+
+        return [
+            'status' => true,
+            'data' => $response
+        ];
     }
 
-    /**
-     * @deprecated
-     */
-    public static function registerAutoloader()
+    public function verifyTransaction(string $transactionRef): array
     {
-        trigger_error('Include "src/autoload.php" instead', E_DEPRECATED | E_USER_NOTICE);
-        require_once(__DIR__ . '/../src/autoload.php');
+        if (empty($transactionRef)) {
+            return ['status' => false, 'message' => 'transactionRef is required'];
+        }
+
+        $response = $this->request(
+            'GET',
+            '/payment/transaction?ref=' . urlencode($transactionRef)
+        );
+
+        return [
+            'status' => true,
+            'data' => $response['data'] ?? $response
+        ];
     }
 
-    public function __get($name)
+    public function fetchBankList(): array
     {
-        return new Router($name, $this);
+        $response = $this->request('GET', '/banks-list');
+
+        return [
+            'status' => true,
+            'data' => $response['data'] ?? $response
+        ];
     }
 
-    public function authorizationUrl($mode = 'live'){
-        $uri = $mode == 'live' ? 'https://pay.wayapay.ng?_tranId=' : 'https://pay.staging.wayapay.ng?_tranId=';
+    public function verifyAccount(array $payload): array
+    {
+        if (empty($payload['accountNumber'])) {
+            return ['status' => false, 'message' => 'accountNumber is required'];
+        }
 
-        return $uri;
+        if (empty($payload['bankCode'])) {
+            return ['status' => false, 'message' => 'bankCode is required'];
+        }
+
+        $response = $this->request(
+            'GET',
+            '/account-verification',
+            $payload
+        );
+
+        return [
+            'status' => true,
+            'data' => $response['data'] ?? $response
+        ];
+    }
+
+    private function request(string $method, string $endpoint, array $body = []): array
+    {
+        $url = $this->baseUrl . $endpoint;
+
+        $headers = [
+            'Content-Type: application/json',
+            'Merchant-ID: ' . $this->merchantId,
+            'API-Secret-Key: ' . $this->publicKey,
+        ];
+
+        $curl = curl_init();
+
+        $options = [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => strtoupper($method),
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_TIMEOUT => 30,
+        ];
+
+        if (!empty($body)) {
+            $options[CURLOPT_POSTFIELDS] = json_encode($body);
+        }
+
+        curl_setopt_array($curl, $options);
+
+        $response = curl_exec($curl);
+        $error = curl_error($curl);
+        $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        curl_close($curl);
+
+        if ($error) {
+            return [
+                'status' => false,
+                'message' => $error
+            ];
+        }
+
+        $decodedResponse = json_decode($response, true);
+
+        if ($statusCode >= 400) {
+            return $decodedResponse ?: [
+                'status' => false,
+                'message' => 'Request failed',
+                'code' => $statusCode
+            ];
+        }
+
+        return $decodedResponse ?: [];
     }
 }

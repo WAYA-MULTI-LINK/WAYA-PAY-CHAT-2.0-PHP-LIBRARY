@@ -1,148 +1,299 @@
-# wayapay-php
+# WayaPay PHP SDK
 
+Official PHP SDK for integrating with WayaPay payment APIs.
 
-A PHP API wrapper for [Wayapay](https://wayapay.ng/).
+The SDK provides support for:
 
-[![Wayapay](img/wayapay.png?raw=true "Wayapay")](https://wayapay.ng/)
+- Payment Collection
+- Payouts
+- Transaction Verification
+- Bank Listing
+- Account Verification
+
+---
+
+## Installation
+
+Install the SDK using Composer:
+
+```bash
+composer require wayapay/php-sdk
+```
+
+If you are testing locally before publishing to Packagist, add the SDK manually to your project and run:
+
+```bash
+composer dump-autoload
+```
+
+---
 
 ## Requirements
-- Curl 7.34.0 or more recent (Unless using Guzzle)
-- PHP 5.4.0 or more recent
 
-## Install
+- PHP >= 8.0
+- PHP cURL extension enabled
+- Composer
 
-### Via Composer
+---
 
-``` bash
-    $ composer require pils36/wayapay-php
+## Recommended Folder Structure
+
+```text
+wayapay-php-sdk/
+├── src/
+│   └── WayaPayRestClient.php
+├── composer.json
+└── README.md
 ```
 
-### Via download
+---
 
-Download a release version from the [releases page](https://github.com/Pils36/wayapay-php/releases).
-Extract, then:
-``` php
-    require 'path/to/src/autoload.php';
-```
-
-## Usage
-
-Do a redirect to the authorization URL received from calling the /transaction endpoint. This URL is valid for one time use, so ensure that you generate a new URL per transaction.
-
-When the payment is successful, we will call your callback URL (as setup in your dashboard or while initializing the transaction) and return the reference sent in the first step as a query parameter.
-
-If you use a test secret key, we will call your test callback url, otherwise, we'll call your live callback url.
-
-### 0. Prerequisites
-Confirm that your server can conclude a TLSv1.2 connection to Wayapay's servers. Most up-to-date software have this capability. Contact your service provider for guidance if you have any SSL errors.
-*Don't disable SSL peer verification!*
-
-### 1. Prepare your parameters
-`email`, `amount`, `description`, `wayaPublicKey` and `merchantId` are the most common compulsory parameters.
-
-### 2. Initialize a transaction
-Initialize a transaction by calling our API.
+## Initialization
 
 ```php
+<?php
 
-    require_once('./vendor/autoload.php');
+require_once __DIR__ . '/vendor/autoload.php';
 
-    $wayapay = new \Pils36\Wayapay;
-    
-    try
-    {
+use WayaPay\WayaPayRestClient;
 
-      $tranx = $wayapay->transaction->initialize([
-        'amount'=>"128.00",     // string   
-        'description'=>"Order for something", // string
-        'currency'=>566, // int
-        'fee'=>1, // int
-        'customer'=> ['name' => "Like Vincent", 'email' => "wakexow@mailinator.com", 'phoneNumber' => "+11948667447"], // array
-        'merchantId'=>"MER_qZaVZ1645265780823HOaZW", // string
-        'wayaPublicKey'=>"WAYAPUBK_TEST_0x3442f06c8fa6454e90c5b1a518758c70", // string
-        'mode'=>"test" // string: \\test or live
-      ]);
-    } catch(\Pils36\Wayapay\Exception\ApiException $e){
-      print_r($e->getResponseObject());
-      die($e->getMessage());
-    }
-
-    // store transaction reference so we can query in case user never comes back
-    // perhaps due to network issue
-    saveLastTransactionId($tranx->data->tranId);
-
-
-    // Get Authorization URL to make payment to the Wayapay payment gateway environment
-    $uri = $wayapay->authorizationUrl('test');  // change to live for production
-
-    // Use the authorization url to
-    $authorization_url = $uri.$tranx->data->tranId;
-
+$client = new WayaPayRestClient(
+    'your-merchant-id',
+    'your-public-key',
+    'development'
+);
 ```
 
-When the user enters their card details, Wayapay will validate and charge the card. It will do all the below:
+---
 
-Redirect back to a callback_url set when initializing the transaction or on your dashboard. Customers see a Transaction was successful message.
+## Environment Values
 
+| Environment | Description |
+|---|---|
+| `development` | Sandbox / staging environment |
+| `test` | Sandbox / staging environment |
+| `production` | Production environment |
+| `prod` | Production environment |
 
-Before you give value to the customer, please make a server-side call to our verification endpoint to confirm the status and properties of the transaction.
+---
 
+## Initialize Payment
 
-### 3. Verify Transaction
-After we redirect to your callback url, please verify the transaction before giving value.
+Initialize a payment collection request.
+
+### Example
 
 ```php
-    $transactionId = isset($_GET['_tranId']) ? $_GET['_tranId'] : '';
-    if(!$transactionId){
-      die('No transaction id provided');
-    }
+$response = $client->initializePayment([
+    'currency' => 'NGN',
+    'amount' => 5000,
+    'callBackUrl' => 'https://yourapp.com/payment/callback',
+    'idempotencyKey' => uniqid('pay_', true),
+    'paymentRef' => 'PAY-' . time(),
 
-    // initiate the Library's Wayapay Object
-    $wayapay = new Pils36\Wayapay;
-    try
-    {
-      // verify using the library
-      $tranx = $wayapay->transaction->verify([
-        '_tranId'=>$transactionId, // unique to transactions
-        'mode'=>'test', // test or live
-      ]);
-    } catch(\Pils36\Wayapay\Exception\ApiException $e){
-      print_r($e->getResponseObject());
-      die($e->getMessage());
-    }
+    'metadata' => [
+        'firstName' => 'John',
+        'lastName' => 'Doe',
+        'phoneNumber' => '08012345678',
+        'emailAddress' => 'john@example.com',
+        'cancelUrl' => 'https://yourapp.com/payment/cancel'
+    ]
+]);
 
-    if ($tranx->status === true) {
-      // transaction was successful...
-      // please check other things like whether you already gave value for this transactions
-      // if the email matches the customer who owns the product etc
-      // Save your transaction information
-    }
+print_r($response);
 ```
 
+### Request Parameters
 
-## Change log
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `currency` | string | Yes | ISO currency code, for example `NGN` |
+| `amount` | int/float | Yes | Amount to charge |
+| `callBackUrl` | string | Yes | URL the customer is redirected to after payment |
+| `idempotencyKey` | string | Yes | Unique key to prevent duplicate transactions |
+| `paymentRef` | string | Yes | Unique merchant payment reference |
+| `metadata` | array | Yes | Customer information |
 
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+### Metadata Parameters
 
-## Testing
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `firstName` | string | Yes | Customer first name |
+| `lastName` | string | Yes | Customer last name |
+| `phoneNumber` | string | Yes | Customer phone number |
+| `emailAddress` | string | Yes | Customer email address |
+| `cancelUrl` | string | No | URL the customer is redirected to if payment is cancelled |
 
-``` bash
-    $ composer test
+---
+
+## Initiate Payout
+
+Send funds from your merchant balance to a bank account.
+
+> Always verify the destination account before initiating a payout.
+
+### Example
+
+```php
+$response = $client->initiatePayout([
+    'currency' => 'NGN',
+    'amount' => 1000,
+    'idempotencyKey' => uniqid('payout_', true),
+    'bankCode' => '058',
+    'accountNumber' => '0123456789'
+]);
+
+print_r($response);
 ```
 
-## Contributing
+### Request Parameters
 
-Please see [CONTRIBUTING](.github/CONTRIBUTING.md) and [CONDUCT](.github/CONDUCT.md) for details. Check our [todo list](TODO.md) for features already intended.
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `currency` | string | Yes | ISO currency code |
+| `amount` | int/float | Yes | Amount to send |
+| `idempotencyKey` | string | Yes | Unique key to prevent duplicate payout attempts |
+| `bankCode` | string | Yes | Destination bank code |
+| `accountNumber` | string | Yes | Destination account number |
 
-## Security
+---
 
-If you discover any security related issues, please email adenugaadebambo41@gmail.com instead of using the issue tracker.
+## Verify Transaction
 
-## Credits
+Retrieve the current status of a transaction by reference.
 
-- [Pils36][link-author]
-- [All Contributors][link-contributors]
+### Example
 
+```php
+$response = $client->verifyTransaction('TRX-123456789');
 
-[link-author]: https://github.com/Pils36
-[link-contributors]: ../../contributors
+print_r($response);
+```
+
+---
+
+## Fetch Bank List
+
+Retrieve the list of supported banks and their bank codes.
+
+### Example
+
+```php
+$response = $client->fetchBankList();
+
+print_r($response);
+```
+
+---
+
+## Verify Account
+
+Verify a bank account before initiating payout.
+
+### Example
+
+```php
+$response = $client->verifyAccount([
+    'accountNumber' => '0123456789',
+    'bankCode' => '058'
+]);
+
+print_r($response);
+```
+
+---
+
+## Successful Response Format
+
+```json
+{
+  "status": true,
+  "data": {
+    "reference": "PAY-123456",
+    "authorizationUrl": "https://checkout.url"
+  }
+}
+```
+
+---
+
+## Error Response Format
+
+```json
+{
+  "status": false,
+  "message": "currency is required"
+}
+```
+
+---
+
+## Production Usage
+
+Use environment variables for credentials in production.
+
+```php
+$client = new WayaPayRestClient(
+    getenv('WAYAPAY_MERCHANT_ID'),
+    getenv('WAYAPAY_SECRET_KEY'),
+    'production'
+);
+```
+
+---
+
+## Example `.env`
+
+```env
+WAYAPAY_MERCHANT_ID=your-merchant-id
+WAYAPAY_SECRET_KEY=your-secret-key
+```
+
+---
+
+## Security Recommendations
+
+- Never expose your API secret key in frontend code.
+- Store credentials in environment variables.
+- Always verify transactions server-side.
+- Use unique idempotency keys for retries.
+- Verify customer bank accounts before initiating payouts.
+
+---
+
+## Composer Configuration
+
+Example `composer.json`:
+
+```json
+{
+  "name": "wayapay/php-sdk",
+  "description": "Official PHP SDK for WayaPay payment collection, payout, transaction verification, bank list, and account verification.",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "WayaPay\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=8.0",
+    "ext-curl": "*"
+  }
+}
+```
+
+---
+
+## Support
+
+For support and integration assistance:
+
+- Website: https://wayapay.ng
+- Email: support@wayapay.ng
+
+---
+
+## License
+
+MIT License
