@@ -17,7 +17,7 @@ The SDK provides support for:
 Install the SDK using Composer:
 
 ```bash
-composer require wayapay/php-sdk
+composer require wayaquick-payment/php-sdk
 ```
 
 If you are testing locally before publishing to Packagist, add the SDK manually to your project and run:

@@ -1,15 +1,22 @@
 {
     "name": "wayapay/php-sdk",
-    "description": "Official PHP SDK for WayaPay payment collection, payout, transaction verification, bank list, and account verification.",
+    "description": "PHP SDK for the WayaPay payment gateway",
     "type": "library",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Your Name",
+            "email": "you@email.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "guzzlehttp/guzzle": "^7.0"
+    },
     "autoload": {
         "psr-4": {
             "WayaPay\\": "src/"
         }
     },
-    "require": {
-        "php": ">=8.0",
-        "ext-curl": "*"
-    }
+    "minimum-stability": "stable"
 }
