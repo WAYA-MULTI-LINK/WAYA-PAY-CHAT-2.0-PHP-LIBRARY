@@ -86,6 +86,10 @@ final class WayaPay
     /**
      * Low level request. Resources call this. Returns the envelope's `data`.
      *
+     * GET requests are retried up to maxRetries times on a transient failure
+     * (timeout, network error, 429, or 5xx) with exponential backoff. Writes
+     * are never auto retried, so a payout is only ever sent once per call.
+     *
      * @param  array<string,mixed>|null $body
      * @param  array<string,mixed>      $query
      * @return mixed
@@ -108,7 +112,7 @@ final class WayaPay
 
         $payload = null;
         if ($body !== null) {
-            // Drop null entries so optional fields behave like the Node client (omit, not send null).
+            // Drop null entries so optional fields are omitted, not sent as null.
             $body = array_filter($body, static fn ($v) => $v !== null);
             $headers[] = 'Content-Type: application/json';
             $payload = json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);

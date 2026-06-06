@@ -17,6 +17,9 @@ final class Identity
      * POST /identity-verification/bvn
      * Accepts a string or ['bvn' => '...']. Validated as 11 digits locally.
      *
+     * BVN data is sensitive personal information. Store, transmit, and log it
+     * only as your data protection obligations allow.
+     *
      * @param  string|array{bvn:string} $input
      * @return array<string,mixed>
      */
