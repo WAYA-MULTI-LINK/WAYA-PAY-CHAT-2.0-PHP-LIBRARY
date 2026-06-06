@@ -16,6 +16,9 @@ final class Collect
      * POST /payment-collect/initiate
      * Defaults a one time NGN link. If linkCanExpire is true, expiryDate is required.
      *
+     * This call fails unless you have whitelisted your server IPs and configured
+     * payment preferences on the merchant dashboard.
+     *
      * @param  array<string,mixed> $input
      * @return array<string,mixed>
      */

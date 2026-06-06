@@ -15,6 +15,7 @@ final class Accounts
     /**
      * POST /account-enquiry/verify-account
      * bankCode is required for OTHERS, optional for WAYABANK.
+     * Always verify a destination before you pay it.
      *
      * @param  array{accountNumber:string,bankCode?:string,enquiryType?:string} $input
      * @return array<string,mixed>

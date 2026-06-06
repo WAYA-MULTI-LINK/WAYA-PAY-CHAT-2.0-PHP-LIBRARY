@@ -2,33 +2,48 @@
 
 declare(strict_types=1);
 
-// Run with: php examples/usage.php
-// Set WAYA_MERCHANT_ID and WAYA_SECRET_KEY in your environment first.
+// Runnable end-to-end demo. Run with:
+//   WAYA_MERCHANT_ID=MER_... WAYA_SECRET_KEY=WAYASECK_TEST_... php samples/usage.php
+//
+// Uses Composer's autoloader when installed, otherwise a minimal PSR-4 fallback.
 
-require __DIR__ . '/../vendor/autoload.php'; // or your own PSR-4 autoloader
+$composer = __DIR__ . '/../vendor/autoload.php';
+if (is_file($composer)) {
+    require $composer;
+} else {
+    spl_autoload_register(static function (string $class): void {
+        if (str_starts_with($class, 'WayaPay\\')) {
+            $rel = str_replace('\\', '/', substr($class, strlen('WayaPay\\')));
+            $file = __DIR__ . '/../src/' . $rel . '.php';
+            if (is_file($file)) {
+                require $file;
+            }
+        }
+    });
+}
 
 use WayaPay\WayaPay;
 use WayaPay\WayaPayException;
 
 $client = new WayaPay([
-    'merchantId' => getenv('WAYA_MERCHANT_ID'),
-    'secretKey' => getenv('WAYA_SECRET_KEY'),
+    'merchantId' => getenv('WAYA_MERCHANT_ID') ?: '',
+    'secretKey' => getenv('WAYA_SECRET_KEY') ?: '',
     'environment' => 'staging', // flip to 'production' when steady
 ]);
 
 try {
-    // 1. Banks
+    // 1. Banks (GET — auto retried on transient failures).
     $banks = $client->banks->list();
     echo 'Banks: ' . count($banks) . PHP_EOL;
 
-    // 2. Verify a destination before you ever move money
+    // 2. Verify a destination before you ever move money.
     $verified = $client->accounts->verify([
         'accountNumber' => '0123456789',
         'bankCode' => '044',
     ]);
     echo 'Resolved name: ' . $verified['accountName'] . PHP_EOL;
 
-    // 3. Mint a virtual account for an order
+    // 3. Mint a virtual account for an order.
     $vacct = $client->accounts->createDynamic([
         'accountName' => 'ORDER-7821 PAYMENT',
         'customerId' => 'CUST-98765',
@@ -37,7 +52,7 @@ try {
     ]);
     echo 'Pay into: ' . $vacct['virtualAccountNumber'] . PHP_EOL;
 
-    // 4. BVN check
+    // 4. BVN check.
     $bvn = $client->identity->verifyBvn('22212345678');
     echo "BVN holder: {$bvn['firstName']} {$bvn['lastName']} | watchListed: {$bvn['watchListed']}" . PHP_EOL;
 
@@ -48,11 +63,11 @@ try {
         'bankCode' => '058',
         'accountName' => $verified['accountName'],
         'reference' => WayaPay::generateReference('PAYOUT'),
-        'narration' => 'Salary payment May 2026',
+        'narration' => 'Salary payment',
     ]);
     echo "Payout: {$payout['payoutReference']} {$payout['status']}" . PHP_EOL;
 
-    // 6. Create a payment link
+    // 6. Create a payment link.
     $link = $client->collect->create([
         'paymentLinkName' => 'Order #1234',
         'description' => 'Order #1234 - 2 items',
@@ -65,7 +80,7 @@ try {
     $txn = $client->transactions->verify($payout['payoutReference']);
     echo 'Txn status: ' . $txn['status'] . PHP_EOL;
 
-    // 8. Reconcile every successful transaction in a window, one stream
+    // 8. Reconcile every successful transaction in a window, one lazy stream.
     $count = 0;
     foreach ($client->transactions->historyAll([
         'status' => 'SUCCESS',
