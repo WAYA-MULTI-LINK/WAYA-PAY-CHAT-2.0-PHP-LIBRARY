@@ -28,7 +28,7 @@ use WayaPay\WayaPayException;
 $client = new WayaPay([
     'merchantId' => getenv('WAYA_MERCHANT_ID') ?: '',
     'secretKey' => getenv('WAYA_SECRET_KEY') ?: '',
-    'environment' => 'staging', // flip to 'production' when steady
+    // Defaults to the production base URL; pass 'baseUrl' to override.
 ]);
 
 try {

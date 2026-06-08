@@ -41,10 +41,10 @@ final class ClientTest extends TestCase
         $this->assertNotNull($client->transactions);
     }
 
-    public function testEnvironmentSelectsStagingBaseUrl(): void
+    public function testBaseUrlOverrideTakesEffect(): void
     {
-        $client = new WayaPay(['merchantId' => 'm', 'secretKey' => 's', 'environment' => 'staging']);
-        $this->assertStringContainsString('services.staging.wayapay.ng', $client->baseUrl);
+        $client = new WayaPay(['merchantId' => 'm', 'secretKey' => 's', 'baseUrl' => 'https://mock.test/api/']);
+        $this->assertSame('https://mock.test/api', $client->baseUrl);
     }
 
     public function testDefaultsToProductionBaseUrl(): void

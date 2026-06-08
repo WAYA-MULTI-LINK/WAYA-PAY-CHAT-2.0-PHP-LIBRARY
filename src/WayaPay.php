@@ -19,10 +19,7 @@ use WayaPay\Resources\Transactions;
  */
 final class WayaPay
 {
-    private const ENVIRONMENTS = [
-        'staging' => 'https://services.staging.wayapay.ng/merchant-middleware/api/v2',
-        'production' => 'https://services.wayapay.ng/merchant-middleware/api/v2',
-    ];
+    private const PRODUCTION_BASE_URL = 'https://services.wayapay.ng/merchant-middleware/api/v2';
 
     public readonly string $merchantId;
     public readonly string $secretKey;
@@ -43,7 +40,6 @@ final class WayaPay
      * @param array{
      *   merchantId: string,
      *   secretKey: string,
-     *   environment?: 'staging'|'production',
      *   baseUrl?: string,
      *   timeout?: int,
      *   maxRetries?: int,
@@ -61,8 +57,7 @@ final class WayaPay
             throw new WayaPayException('secretKey is required', type: 'config');
         }
 
-        $env = $opts['environment'] ?? 'production';
-        $base = $opts['baseUrl'] ?? (self::ENVIRONMENTS[$env] ?? self::ENVIRONMENTS['production']);
+        $base = $opts['baseUrl'] ?? self::PRODUCTION_BASE_URL;
 
         $this->merchantId = $merchantId;
         $this->secretKey = $secretKey;

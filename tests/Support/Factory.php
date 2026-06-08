@@ -19,7 +19,6 @@ final class Factory
         return new WayaPay(array_merge([
             'merchantId' => 'MER_TEST',
             'secretKey' => 'WAYASECK_TEST_key',
-            'environment' => 'staging',
             'maxRetries' => 0,
             'transport' => $transport,
         ], $extra));
