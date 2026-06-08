@@ -17,7 +17,7 @@ use WayaPay\WayaPay;
  *   WAYA_MERCHANT_ID=MER_... WAYA_SECRET_KEY=WAYASECK_TEST_... \
  *     vendor/bin/phpunit --group live
  *
- * They default to staging; set WAYA_ENV=production to target live.
+ * They run against the production API; use test credentials.
  */
 #[Group('live')]
 final class LiveTest extends TestCase
@@ -33,7 +33,6 @@ final class LiveTest extends TestCase
         return new WayaPay([
             'merchantId' => $merchant,
             'secretKey' => $secret,
-            'environment' => getenv('WAYA_ENV') === 'production' ? 'production' : 'staging',
         ]);
     }
 

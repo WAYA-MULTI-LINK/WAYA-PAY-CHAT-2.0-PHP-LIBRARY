@@ -13,7 +13,7 @@ dependencies outside `ext-curl` and `ext-json`.
 
 ### Added
 
-- `WayaPay` client constructed from an options array (`merchantId`, `secretKey`, `environment`, `baseUrl`, `timeout`, `maxRetries`, `transport`).
+- `WayaPay` client constructed from an options array (`merchantId`, `secretKey`, `baseUrl`, `timeout`, `maxRetries`, `transport`). Defaults to the production base URL.
 - `banks->list()` — returns all supported banks and their CBN codes.
 - `accounts->verify()` — resolves an account number to its registered name; requires `bankCode` unless `enquiryType` is `WAYABANK`.
 - `accounts->createDynamic()` — mints a virtual NUBAN; defaults `mode` to `ONE_TIME` and auto-generates `referenceId`.
