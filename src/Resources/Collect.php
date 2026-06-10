@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WayaPay\Resources;
 
 use WayaPay\WayaPay;
+use WayaPay\WayaPayException;
 
 final class Collect
 {
@@ -38,5 +39,27 @@ final class Collect
         }
 
         return $this->client->request('POST', '/payment-collect/initiate', $body);
+    }
+
+    /**
+     * GET /payment-collect/status/{refNo}
+     * Returns the current state of a deposit by its refNo (the gateway transactionId / webhook
+     * OrderId). Use for reconciliation alongside the deposit webhook — the webhook is the primary
+     * signal; this is the pull/safety-net path. Interpret the `status` field with
+     * {@see \WayaPay\Status\CollectionStatus::fromApi()}.
+     *
+     * The returned array carries these wire fields:
+     *   refNo, tranId, merchantId, amount, customerEmail, amountPaid, fee, currencyCode, status,
+     *   settlementStatus, channel, processedBy, description, environment, tranDate
+     *
+     * @return array<string,mixed>
+     */
+    public function getStatus(string $refNo): array
+    {
+        if (trim($refNo) === '') {
+            throw new WayaPayException('refNo is required', type: 'validation');
+        }
+
+        return $this->client->request('GET', '/payment-collect/status/' . rawurlencode($refNo));
     }
 }

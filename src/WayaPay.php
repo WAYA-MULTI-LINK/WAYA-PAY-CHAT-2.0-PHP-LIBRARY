@@ -10,6 +10,7 @@ use WayaPay\Resources\Collect;
 use WayaPay\Resources\Identity;
 use WayaPay\Resources\Payouts;
 use WayaPay\Resources\Transactions;
+use WayaPay\Resources\Webhooks;
 
 /**
  * WayaPay Merchant API v2 client.
@@ -26,6 +27,7 @@ final class WayaPay
     public readonly string $baseUrl;
     public readonly int $timeout;     // milliseconds
     public readonly int $maxRetries;  // GET only
+    public readonly ?string $webhookSecret;
 
     private readonly \Closure $transport;
 
@@ -35,6 +37,7 @@ final class WayaPay
     public readonly Payouts $payouts;
     public readonly Collect $collect;
     public readonly Transactions $transactions;
+    public readonly Webhooks $webhooks;
 
     /**
      * @param array{
@@ -43,6 +46,7 @@ final class WayaPay
      *   baseUrl?: string,
      *   timeout?: int,
      *   maxRetries?: int,
+     *   webhookSecret?: string,
      *   transport?: callable
      * } $opts
      */
@@ -64,6 +68,7 @@ final class WayaPay
         $this->baseUrl = rtrim($base, '/');
         $this->timeout = $opts['timeout'] ?? 30000;
         $this->maxRetries = $opts['maxRetries'] ?? 2;
+        $this->webhookSecret = $opts['webhookSecret'] ?? null;
 
         $transport = $opts['transport'] ?? null;
         $this->transport = $transport
@@ -76,6 +81,7 @@ final class WayaPay
         $this->payouts = new Payouts($this);
         $this->collect = new Collect($this);
         $this->transactions = new Transactions($this);
+        $this->webhooks = new Webhooks($this->webhookSecret);
     }
 
     /**

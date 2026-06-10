@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WayaPay\Resources;
 
 use WayaPay\WayaPay;
+use WayaPay\WayaPayException;
 
 final class Payouts
 {
@@ -33,5 +34,26 @@ final class Payouts
         );
 
         return $this->client->request('POST', '/payment-payout/initiate', $body);
+    }
+
+    /**
+     * GET /payment-payout/status/{reference}
+     * Returns the latest status of a payout by the reference you sent at initiation. Scoped to the
+     * authenticated merchant — a reference belonging to another merchant (or a different environment)
+     * returns 404. Interpret the `status` field with {@see \WayaPay\Status\PayoutStatus::fromApi()}.
+     *
+     * The returned array carries these wire fields:
+     *   transactionReference, status, amount, destinationAccountNumber, destinationAccountName,
+     *   destinationBankName, narration, createdAt
+     *
+     * @return array<string,mixed>
+     */
+    public function getStatus(string $reference): array
+    {
+        if (trim($reference) === '') {
+            throw new WayaPayException('reference is required', type: 'validation');
+        }
+
+        return $this->client->request('GET', '/payment-payout/status/' . rawurlencode($reference));
     }
 }
