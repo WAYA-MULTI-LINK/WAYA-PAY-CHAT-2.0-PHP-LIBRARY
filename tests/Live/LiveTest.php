@@ -38,14 +38,14 @@ final class LiveTest extends TestCase
 
     public function testBanksList(): void
     {
-        $banks = $this->client()->banks->list();
+        $banks = $this->client()->payouts->listBanks();
         $this->assertNotEmpty($banks);
         $this->assertArrayHasKey('code', $banks[0]);
     }
 
     public function testVerifyAccount(): void
     {
-        $out = $this->client()->accounts->verify([
+        $out = $this->client()->payouts->verifyAccount([
             'accountNumber' => getenv('WAYA_TEST_ACCOUNT') ?: '0123456789',
             'bankCode' => getenv('WAYA_TEST_BANK_CODE') ?: '044',
         ]);

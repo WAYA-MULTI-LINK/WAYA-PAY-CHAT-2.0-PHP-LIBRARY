@@ -12,12 +12,10 @@ src/
   WayaPay.php               # Entry point — transport, retry loop, auth headers, helpers
   WayaPayException.php       # Single exception type; branch on ->type and ->errorCode
   Resources/
-    Banks.php                # banks->list
-    Accounts.php             # accounts->verify, accounts->createDynamic
+    Payouts.php              # payouts->listBanks, verifyAccount, initiate, getStatus
+    Collect.php              # collect->create, getStatus
     Identity.php             # identity->verifyBvn
-    Payouts.php              # payouts->initiate
-    Collect.php              # collect->create
-    Transactions.php         # transactions->verify, history, historyAll
+    Webhooks.php             # webhooks->constructEvent, verifySignature
 
 tests/
   bootstrap.php              # Composer autoload, with a PSR-4 fallback
@@ -26,12 +24,10 @@ tests/
     CapturingTransport.php   # Records the last request — assert method/url/headers/body
     SequenceTransport.php    # Returns a queue of responses — drives retry/pagination tests
   ClientTest.php             # Construction, headers, envelope, errors, retry, helpers
-  BanksTest.php              # ... one file per resource
-  AccountsTest.php
+  PayoutsTest.php            # ... one file per resource
   IdentityTest.php
-  PayoutsTest.php
   CollectTest.php
-  TransactionsTest.php
+  WebhookTest.php
   Live/
     LiveTest.php             # #[Group('live')] — hits the real API, excluded by default
 

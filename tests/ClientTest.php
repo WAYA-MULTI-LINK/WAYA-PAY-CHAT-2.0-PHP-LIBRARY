@@ -33,12 +33,10 @@ final class ClientTest extends TestCase
     public function testWiresUpEveryResource(): void
     {
         $client = Factory::ok('{}');
-        $this->assertNotNull($client->banks);
-        $this->assertNotNull($client->accounts);
         $this->assertNotNull($client->identity);
         $this->assertNotNull($client->payouts);
         $this->assertNotNull($client->collect);
-        $this->assertNotNull($client->transactions);
+        $this->assertNotNull($client->webhooks);
     }
 
     public function testBaseUrlOverrideTakesEffect(): void
@@ -58,7 +56,7 @@ final class ClientTest extends TestCase
         $cap = new CapturingTransport(200, Factory::okBody('[]'));
         $client = Factory::client($cap);
 
-        $client->banks->list();
+        $client->payouts->listBanks();
 
         $headers = $cap->last()['headers'];
         $this->assertContains('Authorization: Bearer WAYASECK_TEST_key', $headers);
@@ -71,7 +69,7 @@ final class ClientTest extends TestCase
         $cap = new CapturingTransport(200, Factory::okBody('{}'));
         $client = Factory::client($cap);
 
-        $client->banks->list(); // GET, no body
+        $client->payouts->listBanks(); // GET, no body
         $this->assertNotContains('Content-Type: application/json', $cap->last()['headers']);
 
         $client->identity->verifyBvn('22500809037'); // POST
@@ -90,7 +88,7 @@ final class ClientTest extends TestCase
         $client = Factory::client(new CapturingTransport(400, Factory::errBody('57', 'IP not whitelisted')));
 
         try {
-            $client->banks->list();
+            $client->payouts->listBanks();
             $this->fail('expected WayaPayException');
         } catch (WayaPayException $e) {
             $this->assertSame('api', $e->type);
@@ -105,7 +103,7 @@ final class ClientTest extends TestCase
         $client = Factory::client(new CapturingTransport(502, '<html>502</html>'));
 
         try {
-            $client->banks->list();
+            $client->payouts->listBanks();
             $this->fail('expected WayaPayException');
         } catch (WayaPayException $e) {
             $this->assertSame('api', $e->type);
@@ -121,7 +119,7 @@ final class ClientTest extends TestCase
         ]);
         $client = Factory::client($seq, ['maxRetries' => 2]);
 
-        $client->banks->list();
+        $client->payouts->listBanks();
         $this->assertSame(2, $seq->calls, 'should have retried once then succeeded');
     }
 
