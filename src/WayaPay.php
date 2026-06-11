@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace WayaPay;
 
-use WayaPay\Resources\Accounts;
-use WayaPay\Resources\Banks;
 use WayaPay\Resources\Collect;
 use WayaPay\Resources\Identity;
 use WayaPay\Resources\Payouts;
-use WayaPay\Resources\Transactions;
 use WayaPay\Resources\Webhooks;
 
 /**
@@ -31,12 +28,9 @@ final class WayaPay
 
     private readonly \Closure $transport;
 
-    public readonly Banks $banks;
-    public readonly Accounts $accounts;
     public readonly Identity $identity;
     public readonly Payouts $payouts;
     public readonly Collect $collect;
-    public readonly Transactions $transactions;
     public readonly Webhooks $webhooks;
 
     /**
@@ -75,12 +69,9 @@ final class WayaPay
             ? \Closure::fromCallable($transport)
             : \Closure::fromCallable([$this, 'curlTransport']);
 
-        $this->banks = new Banks($this);
-        $this->accounts = new Accounts($this);
         $this->identity = new Identity($this);
         $this->payouts = new Payouts($this);
         $this->collect = new Collect($this);
-        $this->transactions = new Transactions($this);
         $this->webhooks = new Webhooks($this->webhookSecret);
     }
 

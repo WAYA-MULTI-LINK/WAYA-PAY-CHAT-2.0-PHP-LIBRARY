@@ -39,24 +39,15 @@ $client = new WayaPay([
 
 try {
     // 1. Banks (GET — auto retried on transient failures).
-    $banks = $client->banks->list();
+    $banks = $client->payouts->listBanks();
     echo 'Banks: ' . count($banks) . PHP_EOL;
 
     // 2. Verify a destination before you ever move money.
-    $verified = $client->accounts->verify([
+    $verified = $client->payouts->verifyAccount([
         'accountNumber' => '0123456789',
         'bankCode' => '044',
     ]);
     echo 'Resolved name: ' . $verified['accountName'] . PHP_EOL;
-
-    // 3. Mint a virtual account for an order.
-    $vacct = $client->accounts->createDynamic([
-        'accountName' => 'ORDER-7821 PAYMENT',
-        'customerId' => 'CUST-98765',
-        'referenceId' => 'ORDER-7821',
-        'purpose' => 'Order payment',
-    ]);
-    echo 'Pay into: ' . $vacct['virtualAccountNumber'] . PHP_EOL;
 
     // 4. BVN check.
     $bvn = $client->identity->verifyBvn('22212345678');
@@ -108,22 +99,7 @@ try {
         }
     }
 
-    // 7. Verify a transaction. Trust status, not your own assumptions.
-    $txn = $client->transactions->verify($payout['payoutReference']);
-    echo 'Txn status: ' . $txn['status'] . PHP_EOL;
-
-    // 8. Reconcile every successful transaction in a window, one lazy stream.
-    $count = 0;
-    foreach ($client->transactions->historyAll([
-        'status' => 'SUCCESS',
-        'from' => '2026-05-01T00:00:00Z',
-        'to' => '2026-05-31T23:59:59Z',
-    ]) as $t) {
-        $count++;
-    }
-    echo "Reconciled: {$count} transactions" . PHP_EOL;
-
-    // 9. Verify a webhook (offline demo). In production WayaPay POSTs this to your HTTPS endpoint;
+    // 7. Verify a webhook (offline demo). In production WayaPay POSTs this to your HTTPS endpoint;
     //    here we sign a sample body locally to show the verification flow end to end.
     $secret = 'WAYASECK_TEST_demo_webhook_secret';
     $body = '{"OrderId":"1779662251460508970","Amount":1500.00,"Fee":15.00,"Currency":"NGN",'

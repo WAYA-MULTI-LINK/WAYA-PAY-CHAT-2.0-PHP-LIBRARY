@@ -1,8 +1,8 @@
 # WayaPay PHP
 
-PHP client for the **WayaPay Merchant API v2**. Collect payments, send payouts, mint virtual accounts, verify bank accounts, run BVN identity checks, and reconcile transactions in Nigeria.
+PHP client for the **WayaPay Merchant API v2**. Collect payments, send payouts, verify bank accounts, and run BVN identity checks in Nigeria.
 
-One client, six resources, a single transport that handles auth headers and the shared response envelope so you never parse `success`/`code` by hand. No Guzzle, no PSR-18 stack — just `ext-curl` and `ext-json`. **Server-side only** — your secret key must never leave your server.
+One client, four resources, a single transport that handles auth headers and the shared response envelope so you never parse `success`/`code` by hand. No Guzzle, no PSR-18 stack — just `ext-curl` and `ext-json`. **Server-side only** — your secret key must never leave your server.
 
 ## Requirements
 
@@ -34,14 +34,14 @@ The client targets the production base URL. Test with a `WAYASECK_TEST_...` key,
 Every method returns the envelope's `data` payload directly, already decoded into an associative array. The `success`, `code`, and `timestamp` fields only matter when something fails — and failures throw — so the happy path stays clean:
 
 ```php
-$acct = $client->accounts->verify(['accountNumber' => '0123456789', 'bankCode' => '044']);
+$acct = $client->payouts->verifyAccount(['accountNumber' => '0123456789', 'bankCode' => '044']);
 echo $acct['accountName']; // straight to the useful part
 ```
 
 ## List banks
 
 ```php
-$banks = $client->banks->list();
+$banks = $client->payouts->listBanks();
 // [['code' => '044', 'name' => 'Access Bank', 'id' => '044', 'status' => true], ...]
 ```
 
@@ -50,7 +50,7 @@ $banks = $client->banks->list();
 Always verify before sending a payout — confirms the account exists and returns the registered name.
 
 ```php
-$result = $client->accounts->verify([
+$result = $client->payouts->verifyAccount([
     'accountNumber' => '0123456789',
     'bankCode'      => '044',       // omit only when enquiryType is 'WAYABANK'
     'enquiryType'   => 'OTHERS',    // default
@@ -70,6 +70,10 @@ $payout = $client->payouts->initiate([
     // currency defaults to 'NGN', reference auto-generated if omitted
 ]);
 // $payout['status'] === 'PROCESSING' means accepted, not settled
+
+// Reconcile by the reference you sent at initiation:
+$status = $client->payouts->getStatus($payout['transactionReference'] ?? $payout['payoutReference']);
+// interpret $status['status'] with WayaPay\Status\PayoutStatus::fromApi(...)
 ```
 
 ## Collect a payment
@@ -83,21 +87,13 @@ $link = $client->collect->create([
     // paymentLinkType defaults to 'ONE_TIME_PAYMENT_LINK', currency to 'NGN'
 ]);
 // Send the customer to $link['shortUrl']. Keep $link['paymentLinkReference'] to reconcile.
+
+// Reconcile a deposit by its refNo (the gateway transactionId / webhook orderId):
+$collectStatus = $client->collect->getStatus($refNo);
+// interpret $collectStatus['status'] with WayaPay\Status\CollectionStatus::fromApi(...)
 ```
 
 If you set `'linkCanExpire' => true`, you must also pass `'expiryDate'`. The library enforces it before the call leaves your server. `collect->create` also fails unless you have whitelisted your server IPs and configured payment preferences on the dashboard.
-
-## Mint a virtual account
-
-```php
-$vacct = $client->accounts->createDynamic([
-    'accountName' => 'ORDER-7821 PAYMENT',
-    'customerId'  => 'CUST-98765',
-    'purpose'     => 'Order payment',
-    // referenceId auto-generated if omitted; mode defaults to 'ONE_TIME'
-]);
-// Hand $vacct['virtualAccountNumber'] to the customer.
-```
 
 ## BVN identity check
 
@@ -109,40 +105,24 @@ echo "{$bvn['firstName']} {$bvn['lastName']}";
 
 BVN data is sensitive personal information. Store, transmit, and log it only as your data-protection obligations allow.
 
-## Verify a transaction / reconcile
-
-```php
-// Verify one transaction
-$txn = $client->transactions->verify('WQ-TXN-9F8E7D6C');
-// $txn['status'] === 'SUCCESS' means settled
-
-// One page of history
-$page = $client->transactions->history(['page' => 0, 'size' => 20, 'status' => 'SUCCESS']);
-
-// Or stream every matching transaction across all pages (built for reconciliation)
-foreach ($client->transactions->historyAll(['status' => 'SUCCESS']) as $t) {
-    // process $t — the SDK walks the pages for you lazily
-}
-```
-
-A payout returning `PROCESSING` is accepted, not settled. Poll `transactions->verify` with the reference until you see `SUCCESS`.
+A payout returning `PROCESSING` is accepted, not settled. Poll `payouts->getStatus` with the reference until it reaches a terminal status.
 
 ## The resources
 
 | Resource | Method | Endpoint |
 |---|---|---|
-| `$client->banks` | `list` | `GET /account-enquiry/get-bank-list` |
-| `$client->accounts` | `verify` | `POST /account-enquiry/verify-account` |
-| `$client->accounts` | `createDynamic` | `POST /account-enquiry/create-dynamic-account` |
-| `$client->identity` | `verifyBvn` | `POST /identity-verification/bvn` |
+| `$client->payouts` | `listBanks` | `GET /get-bank-list` |
+| `$client->payouts` | `verifyAccount` | `POST /verify-account` |
 | `$client->payouts` | `initiate` | `POST /payment-payout/initiate` |
+| `$client->payouts` | `getStatus` | `GET /payment-payout/status/{reference}` |
 | `$client->collect` | `create` | `POST /payment-collect/initiate` |
-| `$client->transactions` | `verify` | `GET /transaction/verify` |
-| `$client->transactions` | `history` / `historyAll` | `GET /transaction/history` |
+| `$client->collect` | `getStatus` | `GET /payment-collect/status/{refNo}` |
+| `$client->identity` | `verifyBvn` | `POST /identity-verification/bvn` |
+| `$client->webhooks` | `constructEvent` / `verifySignature` | — (verifies inbound webhooks) |
 
 ## References
 
-In v2, the unique `reference` you supply is your dedup and reconciliation key. Generate a fresh one per logical operation so retries map to the original record instead of spawning duplicates. The library auto-fills it on payouts and dynamic accounts when you leave it out, or generate your own:
+In v2, the unique `reference` you supply is your dedup and reconciliation key. Generate a fresh one per logical operation so retries map to the original record instead of spawning duplicates. The library auto-fills it on payouts when you leave it out, or generate your own:
 
 ```php
 $ref = WayaPay::generateReference('PAYOUT'); // PAYOUT-1748160000000-A1B2C3D4
@@ -180,7 +160,7 @@ new WayaPay([
 ]);
 ```
 
-Retries apply to **GET only** (bank list, verify, history) and only on timeouts, network errors, 429, or 5xx, with exponential backoff. Writes (payout, collect, dynamic account, BVN) never auto-retry, because retrying a write you are unsure about is how you pay someone twice. Retry those yourself, with the same `reference`, once you have checked the transaction status.
+Retries apply to **GET only** (bank list, status checks) and only on timeouts, network errors, 429, or 5xx, with exponential backoff. Writes (payout, account verify, collect, BVN) never auto-retry, because retrying a write you are unsure about is how you pay someone twice. Retry those yourself, with the same `reference`, once you have checked the transaction status.
 
 ## Custom transport (testing)
 

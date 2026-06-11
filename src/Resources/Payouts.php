@@ -14,6 +14,42 @@ final class Payouts
     }
 
     /**
+     * GET /get-bank-list
+     *
+     * @return array<int,array<string,mixed>> List of banks with code, name, id, status.
+     */
+    public function listBanks(): array
+    {
+        return $this->client->request('GET', '/get-bank-list') ?? [];
+    }
+
+    /**
+     * POST /verify-account
+     * bankCode is required for OTHERS, optional for WAYABANK.
+     * Always verify a destination before you pay it.
+     *
+     * @param  array{accountNumber:string,bankCode?:string,enquiryType?:string} $input
+     * @return array<string,mixed>
+     */
+    public function verifyAccount(array $input): array
+    {
+        $accountNumber = $input['accountNumber'] ?? null;
+        $bankCode = $input['bankCode'] ?? null;
+        $enquiryType = $input['enquiryType'] ?? 'OTHERS';
+
+        WayaPay::requireFields(['accountNumber' => $accountNumber], ['accountNumber'], 'account verification');
+        if ($enquiryType !== 'WAYABANK') {
+            WayaPay::requireFields(['bankCode' => $bankCode], ['bankCode'], 'account verification (external bank)');
+        }
+
+        return $this->client->request('POST', '/verify-account', [
+            'accountNumber' => $accountNumber,
+            'bankCode' => $bankCode,
+            'enquiryType' => $enquiryType,
+        ]);
+    }
+
+    /**
      * POST /payment-payout/initiate
      * Defaults currency NGN, auto generates reference when omitted.
      * PROCESSING means accepted, not settled. Verify with the reference afterwards.
