@@ -92,10 +92,19 @@ WAYA_MERCHANT_ID=MER_... WAYA_SECRET_KEY=WAYASECK_TEST_... php samples/usage.php
 
 This project follows [Semantic Versioning](https://semver.org).
 
+If you are publishing an updated package version, change the version number first, then create and push the release tag:
+
+```bash
+git tag v2.0.0
+git push origin v2.0.0
+```
+
+Replace `v2.0.0` with the new version you are releasing.
+
 ## Code style
 
 - `declare(strict_types=1);` at the top of every file.
 - One resource per file; the resource constructor takes only the `WayaPay` client.
 - Validate at the boundary with `WayaPay::requireFields` (type `validation`); it throws before the request leaves your server.
 - Throw `WayaPayException` with the right `type` so callers can branch.
-- No comments explaining *what* the code does — only add one when the *why* is non-obvious.
+- No comments explaining _what_ the code does — only add one when the _why_ is non-obvious.
