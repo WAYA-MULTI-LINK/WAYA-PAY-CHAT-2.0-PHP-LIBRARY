@@ -1,5 +1,5 @@
 {
-    "name": "wayapay/wayapay",
+    "name": "wayaquick/payment-sdk",
     "description": "PHP client for the WayaPay Merchant API v2: collect, payout, accounts, identity, transactions.",
     "type": "library",
     "license": "MIT",
