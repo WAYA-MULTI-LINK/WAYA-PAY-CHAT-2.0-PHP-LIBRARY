@@ -11,7 +11,7 @@ PHP 8.1 or newer, with the `curl` and `json` extensions (both standard).
 ## Install
 
 ```bash
-composer require wayapay/wayapay
+composer require wayaquick/payment-sdk
 ```
 
 Or drop the folder in and point any PSR-4 autoloader at `WayaPay\` => `src/`.
@@ -109,16 +109,16 @@ A payout returning `PROCESSING` is accepted, not settled. Poll `payouts->getStat
 
 ## The resources
 
-| Resource | Method | Endpoint |
-|---|---|---|
-| `$client->payouts` | `listBanks` | `GET /get-bank-list` |
-| `$client->payouts` | `verifyAccount` | `POST /verify-account` |
-| `$client->payouts` | `initiate` | `POST /payment-payout/initiate` |
-| `$client->payouts` | `getStatus` | `GET /payment-payout/status/{reference}` |
-| `$client->collect` | `create` | `POST /payment-collect/initiate` |
-| `$client->collect` | `getStatus` | `GET /payment-collect/status/{refNo}` |
-| `$client->identity` | `verifyBvn` | `POST /identity-verification/bvn` |
-| `$client->webhooks` | `constructEvent` / `verifySignature` | — (verifies inbound webhooks) |
+| Resource            | Method                               | Endpoint                                 |
+| ------------------- | ------------------------------------ | ---------------------------------------- |
+| `$client->payouts`  | `listBanks`                          | `GET /get-bank-list`                     |
+| `$client->payouts`  | `verifyAccount`                      | `POST /verify-account`                   |
+| `$client->payouts`  | `initiate`                           | `POST /payment-payout/initiate`          |
+| `$client->payouts`  | `getStatus`                          | `GET /payment-payout/status/{reference}` |
+| `$client->collect`  | `create`                             | `POST /payment-collect/initiate`         |
+| `$client->collect`  | `getStatus`                          | `GET /payment-collect/status/{refNo}`    |
+| `$client->identity` | `verifyBvn`                          | `POST /identity-verification/bvn`        |
+| `$client->webhooks` | `constructEvent` / `verifySignature` | — (verifies inbound webhooks)            |
 
 ## References
 
