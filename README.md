@@ -52,8 +52,8 @@ Always verify before sending a payout — confirms the account exists and return
 ```php
 $result = $client->payouts->verifyAccount([
     'accountNumber' => '0123456789',
-    'bankCode'      => '044',       // omit only when enquiryType is 'WAYABANK'
-    'enquiryType'   => 'OTHERS',    // default
+    'bankCode'      => '044',       // omit when enquiryType is 'WAYA-BANK' (or 'WAYABANK')
+    'enquiryType'   => 'OTHERS',    // 'OTHERS' (inter-bank, default) or 'WAYA-BANK' (intra-bank)
 ]);
 echo $result['accountName']; // "JOHN DOE"
 ```

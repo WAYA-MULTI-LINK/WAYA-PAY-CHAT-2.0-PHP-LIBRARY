@@ -60,6 +60,10 @@ final class PayoutsTest extends TestCase
 
         $this->assertSame('JOHN DOE', $out['accountName']);
         $this->assertSame(1, $cap->count());
+
+        $outHyphen = $client->payouts->verifyAccount(['accountNumber' => '0123456789', 'enquiryType' => 'WAYA-BANK']);
+        $this->assertSame('JOHN DOE', $outHyphen['accountName']);
+        $this->assertSame(2, $cap->count());
     }
 
     public function testVerifyAccountDecodesResolvedAccountAndPostsCorrectly(): void

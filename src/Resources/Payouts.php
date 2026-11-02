@@ -25,7 +25,8 @@ final class Payouts
 
     /**
      * POST /verify-account
-     * bankCode is required for OTHERS, optional for WAYABANK.
+     * Resolves an account number to its registered name.
+     * bankCode is required for OTHERS, optional for WAYA-BANK / WAYABANK.
      * Always verify a destination before you pay it.
      *
      * @param  array{accountNumber:string,bankCode?:string,enquiryType?:string} $input
@@ -38,7 +39,7 @@ final class Payouts
         $enquiryType = $input['enquiryType'] ?? 'OTHERS';
 
         WayaPay::requireFields(['accountNumber' => $accountNumber], ['accountNumber'], 'account verification');
-        if ($enquiryType !== 'WAYABANK') {
+        if ($enquiryType !== 'WAYABANK' && $enquiryType !== 'WAYA-BANK') {
             WayaPay::requireFields(['bankCode' => $bankCode], ['bankCode'], 'account verification (external bank)');
         }
 
