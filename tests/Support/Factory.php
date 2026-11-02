@@ -66,10 +66,14 @@ final class Factory
     public static function collectInput(): array
     {
         return [
-            'paymentLinkName' => 'Order #1234',
+            'transactionId' => 'TX-123456',
+            'amount' => '1500.00',
+            'currency' => 'NGN',
+            'firstName' => 'John',
+            'lastName' => 'Doe',
+            'email' => 'john.doe@example.com',
+            'phone' => '08012345678',
             'description' => 'Order #1234 - 2 items',
-            'payableAmount' => 1500,
-            'redirectLink' => 'https://merchant.example.com/callback',
         ];
     }
 }

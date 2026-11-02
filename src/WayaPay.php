@@ -99,6 +99,17 @@ final class WayaPay
     }
 
     /**
+     * Initiate payment collection and obtain a hosted checkout URL.
+     *
+     * @param  array<string,mixed> $payload
+     * @return array<string,mixed>
+     */
+    public function initiatePayment(array $payload): array
+    {
+        return $this->collect->create($payload);
+    }
+
+    /**
      * Low level request. Resources call this. Returns the envelope's `data`.
      *
      * GET requests are retried up to maxRetries times on a transient failure

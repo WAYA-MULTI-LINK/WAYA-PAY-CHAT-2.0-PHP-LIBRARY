@@ -15,10 +15,20 @@ final class Collect
 
     /**
      * POST /payment-collect/initiate
-     * Defaults a one time NGN link. If linkCanExpire is true, expiryDate is required.
+     * Initiates payment collection and returns hosted checkout details (including checkOutUrl).
      *
-     * This call fails unless you have whitelisted your server IPs and configured
-     * payment preferences on the merchant dashboard.
+     * Required fields in $input:
+     *   - transactionId: string (Merchant unique reference)
+     *   - amount: string|numeric (Quoted string with up to 2 decimal places, e.g. "1500.00")
+     *   - firstName: string
+     *   - lastName: string
+     *   - email: string
+     *   - phone: string
+     *
+     * Optional fields:
+     *   - currency: string (defaults to 'NGN')
+     *   - description: string
+     *   - meta: array
      *
      * @param  array<string,mixed> $input
      * @return array<string,mixed>
@@ -26,19 +36,31 @@ final class Collect
     public function create(array $input): array
     {
         $body = array_merge(
-            ['paymentLinkType' => 'ONE_TIME_PAYMENT_LINK', 'currency' => 'NGN'],
+            ['currency' => 'NGN'],
             $input,
         );
         WayaPay::requireFields(
             $body,
-            ['paymentLinkType', 'paymentLinkName', 'description', 'payableAmount', 'currency', 'redirectLink'],
+            ['transactionId', 'amount', 'firstName', 'lastName', 'email', 'phone'],
             'payment collect',
         );
-        if (($body['linkCanExpire'] ?? false) === true) {
-            WayaPay::requireFields($body, ['expiryDate'], 'payment collect (expiry)');
+
+        if (is_numeric($body['amount'])) {
+            $body['amount'] = (string) $body['amount'];
         }
 
         return $this->client->request('POST', '/payment-collect/initiate', $body);
+    }
+
+    /**
+     * Alias for {@see create()}.
+     *
+     * @param  array<string,mixed> $input
+     * @return array<string,mixed>
+     */
+    public function initiate(array $input): array
+    {
+        return $this->create($input);
     }
 
     /**

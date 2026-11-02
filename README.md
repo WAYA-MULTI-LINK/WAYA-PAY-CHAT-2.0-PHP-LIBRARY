@@ -79,21 +79,22 @@ $status = $client->payouts->getStatus($payout['transactionReference'] ?? $payout
 ## Collect a payment
 
 ```php
-$link = $client->collect->create([
-    'paymentLinkName' => 'Order #1234',
-    'description'     => 'Order #1234 - 2 items',
-    'payableAmount'   => 1500,
-    'redirectLink'    => 'https://merchant.example.com/callback',
-    // paymentLinkType defaults to 'ONE_TIME_PAYMENT_LINK', currency to 'NGN'
+$checkout = $client->collect->create([
+    'transactionId' => WayaPay::generateReference('COLL'),
+    'amount'        => '1500.00',
+    'currency'      => 'NGN',
+    'firstName'     => 'John',
+    'lastName'      => 'Doe',
+    'email'         => 'customer@example.com',
+    'phone'         => '08012345678',
+    'description'   => 'Order #1234 - 2 items',
 ]);
-// Send the customer to $link['shortUrl']. Keep $link['paymentLinkReference'] to reconcile.
+// Send the customer to $checkout['checkOutUrl']. Keep $checkout['transactionId'] to reconcile.
 
 // Reconcile a deposit by its refNo (the gateway transactionId / webhook orderId):
 $collectStatus = $client->collect->getStatus($refNo);
 // interpret $collectStatus['status'] with WayaPay\Status\CollectionStatus::fromApi(...)
 ```
-
-If you set `'linkCanExpire' => true`, you must also pass `'expiryDate'`. The library enforces it before the call leaves your server. `collect->create` also fails unless you have whitelisted your server IPs and configured payment preferences on the dashboard.
 
 ## BVN identity check
 

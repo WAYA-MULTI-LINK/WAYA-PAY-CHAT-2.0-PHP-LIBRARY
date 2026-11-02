@@ -79,17 +79,21 @@ try {
             break;
     }
 
-    // 6. Create a payment link.
-    $link = $client->collect->create([
-        'paymentLinkName' => 'Order #1234',
+    // 6. Initiate hosted payment collection checkout.
+    $checkout = $client->collect->create([
+        'transactionId' => WayaPay::generateReference('COLL'),
+        'amount' => '1500.00',
+        'currency' => 'NGN',
+        'firstName' => 'John',
+        'lastName' => 'Doe',
+        'email' => 'john.doe@example.com',
+        'phone' => '08012345678',
         'description' => 'Order #1234 - 2 items',
-        'payableAmount' => 1500,
-        'redirectLink' => 'https://merchant.example.com/callback',
     ]);
-    echo 'Send customer to: ' . $link['shortUrl'] . PHP_EOL;
+    echo 'Send customer to: ' . ($checkout['checkOutUrl'] ?? '') . PHP_EOL;
 
     // 6b. Check collection status — the pull/safety-net path alongside the webhook.
-    $collectRef = $link['transactionId'] ?? $link['paymentLinkReference'] ?? null;
+    $collectRef = $checkout['transactionId'] ?? null;
     if ($collectRef) {
         $collectStatus = $client->collect->getStatus($collectRef);
         $parsed = CollectionStatus::fromApi($collectStatus['status'] ?? null);
