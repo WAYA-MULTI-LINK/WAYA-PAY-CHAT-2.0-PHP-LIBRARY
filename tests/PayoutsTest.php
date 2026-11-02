@@ -89,6 +89,25 @@ final class PayoutsTest extends TestCase
         $client->payouts->initiate(['amount' => 5000]); // missing accountNumber, bankCode, etc.
     }
 
+    public function testInitiateAllowsOmittingAccountNameAndNarration(): void
+    {
+        $cap = new CapturingTransport(200, Factory::okBody('{"status":"PROCESSING"}'));
+        $client = Factory::client($cap);
+
+        $input = [
+            'amount' => 5000,
+            'accountNumber' => '0123456789',
+            'bankCode' => '044',
+            'reference' => 'REF-001',
+        ];
+        $client->payouts->initiate($input);
+
+        $body = $cap->lastBody();
+        $this->assertSame(5000, $body['amount']);
+        $this->assertArrayNotHasKey('accountName', $body);
+        $this->assertArrayNotHasKey('narration', $body);
+    }
+
     public function testInitiateDefaultsCurrencyAndReference(): void
     {
         $cap = new CapturingTransport(200, Factory::okBody('{"status":"PROCESSING"}'));

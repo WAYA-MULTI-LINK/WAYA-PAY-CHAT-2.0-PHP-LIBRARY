@@ -53,6 +53,7 @@ final class Payouts
     /**
      * POST /payment-payout/initiate
      * Defaults currency NGN, auto generates reference when omitted.
+     * accountName and narration are optional.
      * PROCESSING means accepted, not settled. Verify with the reference afterwards.
      *
      * @param  array<string,mixed> $input
@@ -66,7 +67,7 @@ final class Payouts
         }
         WayaPay::requireFields(
             $body,
-            ['amount', 'currency', 'accountNumber', 'bankCode', 'accountName', 'reference', 'narration'],
+            ['amount', 'currency', 'accountNumber', 'bankCode', 'reference'],
             'payout',
         );
 
