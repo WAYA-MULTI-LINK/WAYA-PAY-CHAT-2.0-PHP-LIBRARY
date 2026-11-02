@@ -97,9 +97,16 @@ If you set `'linkCanExpire' => true`, you must also pass `'expiryDate'`. The lib
 
 ## BVN identity check
 
+Verification takes two steps: submitting the BVN sends an OTP to the phone number registered against it, and the holder's record is returned once that OTP is verified.
+
 ```php
-$bvn = $client->identity->verifyBvn('22212345678'); // 11 digits, validated locally
-echo "{$bvn['firstName']} {$bvn['lastName']}";
+// Step 1: Initiate verification (sends OTP)
+$started = $client->identity->initiateBvn('22222222222'); // 11 digits, validated locally
+echo "OTP sent to {$started['phoneNumber']}, session: {$started['reference']}\n";
+
+// Step 2: Complete verification with OTP
+$bvn = $client->identity->completeBvn($started['reference'], '123456');
+echo "{$bvn['firstName']} {$bvn['lastName']}\n";
 // treat anything other than "False" on $bvn['watchListed'] with care
 ```
 
@@ -117,7 +124,8 @@ A payout returning `PROCESSING` is accepted, not settled. Poll `payouts->getStat
 | `$client->payouts`  | `getStatus`                          | `GET /payment-payout/status/{reference}` |
 | `$client->collect`  | `create`                             | `POST /payment-collect/initiate`         |
 | `$client->collect`  | `getStatus`                          | `GET /payment-collect/status/{refNo}`    |
-| `$client->identity` | `verifyBvn`                          | `POST /identity-verification/bvn`        |
+| `$client->identity` | `initiateBvn`                        | `POST /identity-verification/bvn/initiate` |
+| `$client->identity` | `completeBvn`                        | `POST /identity-verification/bvn/complete` |
 | `$client->webhooks` | `constructEvent` / `verifySignature` | — (verifies inbound webhooks)            |
 
 ## References

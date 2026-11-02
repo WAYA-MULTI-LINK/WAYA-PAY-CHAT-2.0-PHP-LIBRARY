@@ -76,6 +76,29 @@ final class WayaPay
     }
 
     /**
+     * Initiate BVN verification (Step 1). Dispatches an OTP.
+     *
+     * @param  string|array{bvn:string} $input
+     * @return array{reference:string,phoneNumber:string,expiresAt:string}
+     */
+    public function initiateBvn(string|array $input): array
+    {
+        return $this->identity->initiateBvn($input);
+    }
+
+    /**
+     * Complete BVN verification (Step 2) with reference and OTP.
+     *
+     * @param  string|array{reference:string,otp:string} $referenceOrInput
+     * @param  string|null $otp
+     * @return array<string,mixed>
+     */
+    public function completeBvn(string|array $referenceOrInput, ?string $otp = null): array
+    {
+        return $this->identity->completeBvn($referenceOrInput, $otp);
+    }
+
+    /**
      * Low level request. Resources call this. Returns the envelope's `data`.
      *
      * GET requests are retried up to maxRetries times on a transient failure
